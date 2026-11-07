@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CQA — Оценка качества диалогов</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-brand">
+      <span class="brand-logo">F</span>
+      <span class="brand-name">CQA</span>
+      <span class="brand-sub">Оценка качества диалогов</span>
+    </div>
+    <div class="header-role">
+      <span>Роль:</span>
+      <select id="role-select">
+        <option value="analyst">Аналитик</option>
+        <option value="reviewer">Проверяющий</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <p style="color: var(--text-secondary); padding: 2rem;">
+      Система запускается… Убедитесь что бэкенд запущен на <code>http://localhost:8000</code>
+    </p>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
