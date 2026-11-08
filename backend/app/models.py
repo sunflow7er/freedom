@@ -30,9 +30,15 @@ class ChecklistCriterion(BaseModel):
     weight: int
     na_condition: Optional[str] = None
     scale_steps: Optional[list[int]] = None
+    scale_descriptions: Optional[dict[str, str]] = None
+    # Free-text rules explaining how to apply this criterion; edited with the
+    # criterion itself and inserted into the prompt next to it.
+    guidance: Optional[str] = None
 
 
 class ChecklistConfig(BaseModel):
+    # Criterion-agnostic evaluation method, inserted into the prompt before criteria.
+    general_rules: list[str] = []
     criteria: list[ChecklistCriterion]
 
 
