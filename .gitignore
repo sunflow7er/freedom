@@ -9,3 +9,4 @@ dist/
 .DS_Store
 .venv/
 data/dev65_dialogs.md
+.CLAUDE.md
