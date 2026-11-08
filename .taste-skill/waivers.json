@@ -1,0 +1,27 @@
+[
+  {
+    "check": "copy-headline",
+    "target": "(the page)",
+    "reason": "Internal SaaS tool with persistent navigation — no marketing h1 hero needed; the app title is in the sidebar logo and topbar"
+  },
+  {
+    "check": "copy-fact",
+    "target": "(the page)",
+    "reason": "Internal analytics tool — no marketing facts needed on first screen; data is loaded dynamically from API"
+  },
+  {
+    "check": "cta",
+    "target": "div#view-conversations",
+    "reason": "App UI — primary actions (Import, Evaluate All) are in the persistent topbar, accessible from every view"
+  },
+  {
+    "check": "no-visual",
+    "target": "div#view-conversations",
+    "reason": "The conversations list and card panels are the UI — the product itself is the visual; no hero image needed in an internal tool"
+  },
+  {
+    "check": "moment-none",
+    "target": "(the page)",
+    "reason": "Internal tool SPA — designed editorial moments are for landing pages; score odometer animation serves as the motion moment"
+  }
+]
