@@ -1,8 +1,2 @@
 [phases.setup]
 nixPkgs = ["ffmpeg"]
-
-[phases.install]
-cmds = [
-  "pip install -r requirements.txt",
-  "pip install faster-whisper==1.1.1 || pip install faster-whisper==1.1.1 --no-deps && pip install av huggingface-hub tokenizers tqdm requests ctranslate2 || true"
-]
