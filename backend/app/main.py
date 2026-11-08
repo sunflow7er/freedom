@@ -94,6 +94,79 @@ app.include_router(evaluation_router)
 app.include_router(appeals_router)
 
 
+@app.get("/api/export/{group_id}")
+def export_results(group_id: str):
+    """Export evaluations in submission JSON format (schema 1.0)."""
+    CRITERION_MAP = {
+        "c01": "contact", "c02": "discovery", "c03": "identification",
+        "c04": "consultation", "c05": "empathy", "c06": "dialogue",
+        "c07": "closure", "c08": "critical",
+    }
+
+    def convert_value(cid, answer, scale_value):
+        if answer == "na":
+            return None
+        if cid in ("c04", "c06"):
+            return int(scale_value) if scale_value is not None else None
+        return True if answer == "yes" else False
+
+    conn = get_db()
+    try:
+        convs = conn.execute(
+            "SELECT id FROM conversations WHERE group_id = ? ORDER BY id", (group_id,)
+        ).fetchall()
+
+        results = []
+        for conv in convs:
+            conv_id = conv["id"]
+            ev = conn.execute(
+                "SELECT * FROM evaluations WHERE conversation_id = ? AND status = 'done' ORDER BY id DESC LIMIT 1",
+                (conv_id,)
+            ).fetchone()
+
+            if not ev:
+                results.append({"conversation_id": conv_id, "status": "error",
+                                 "criteria": [], "score": None,
+                                 "error": "Диалог не оценён"})
+                continue
+
+            crit_rows = conn.execute(
+                "SELECT * FROM criterion_results WHERE evaluation_id = ? ORDER BY rowid", (ev["id"],)
+            ).fetchall()
+
+            criteria = []
+            critical_flag = False
+            for r in crit_rows:
+                cid = r["criterion_id"]
+                value = convert_value(cid, r["answer"], r["scale_value"])
+                if cid == "c08" and r["answer"] == "yes":
+                    critical_flag = True
+                evidence_raw = json.loads(r["evidence"]) if r["evidence"] else []
+                evidence_turns = [e["msg_index"] + 1 for e in evidence_raw if "msg_index" in e]
+                criteria.append({
+                    "criterion_id": CRITERION_MAP.get(cid, cid),
+                    "value": value,
+                    "rationale": r["explanation"] or "",
+                    "evidence_turns": evidence_turns,
+                })
+
+            final_score = round(float(ev["total"]), 2) if ev["total"] is not None else None
+            results.append({
+                "conversation_id": conv_id, "status": "ok",
+                "criteria": criteria,
+                "score": {"final_score": final_score, "critical_flag": critical_flag},
+            })
+    finally:
+        conn.close()
+
+    return {
+        "schema_version": "1.0",
+        "team_name": "CQA Team",
+        "model": {"mode": "external_api", "name": "claude-sonnet-4-5"},
+        "results": results,
+    }
+
+
 @app.get("/api/health")
 def health() -> JSONResponse:
     return JSONResponse({
