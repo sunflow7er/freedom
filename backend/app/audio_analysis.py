@@ -91,8 +91,24 @@ def analyze_call_audio(audio_url: str) -> dict:
         tmp_path = tmp.name
 
     try:
+        import subprocess
+        import numpy as np
+
+        # Convert to 16kHz mono float32 PCM via ffmpeg subprocess.
+        # Passing a numpy array to model.transcribe() skips faster_whisper's
+        # own audio decoding (which requires av), so this works without av.
+        ff = subprocess.run(
+            ["ffmpeg", "-y", "-i", tmp_path,
+             "-f", "f32le", "-ac", "1", "-ar", "16000", "pipe:1"],
+            capture_output=True,
+        )
+        if ff.returncode != 0 or len(ff.stdout) == 0:
+            raise RuntimeError(f"ffmpeg decode failed: {ff.stderr.decode()[:300]}")
+
+        audio_array = np.frombuffer(ff.stdout, dtype=np.float32)
+
         model = _get_model()
-        segments_gen, info = model.transcribe(tmp_path, word_timestamps=True)
+        segments_gen, info = model.transcribe(audio_array, word_timestamps=True)
         segments = list(segments_gen)
 
         all_words = []
