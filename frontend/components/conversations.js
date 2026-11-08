@@ -1,8 +1,10 @@
 // Conversation list with filters
 (function () {
   let allConvs = [];
-  let filters = { q: '', lang: '', channel: '', status: '', gross: false };
-  let sortMode = 'default'; // default | gross_first | score_desc | score_asc
+  let filters  = { q: '', lang: '', channel: '', status: '', gross: false };
+  let sortMode = 'default';
+  let page     = 1;
+  const PAGE   = 7;
 
   function scoreClass(total) {
     if (total === null || total === undefined) return 'score-none';
@@ -50,7 +52,32 @@
       });
     }
 
-    list.innerHTML = items.map(c => {
+    // Clamp page
+    const totalPages = Math.max(1, Math.ceil(items.length / PAGE));
+    if (page > totalPages) page = totalPages;
+    const pageItems = items.slice((page - 1) * PAGE, page * PAGE);
+
+    // Smart pagination: 1 … (cur-1) cur (cur+1) … last
+    function buildPageBar(cur, total) {
+      if (total <= 1) return '';
+      const pages = new Set([1, total, cur, cur - 1, cur + 1].filter(p => p >= 1 && p <= total));
+      const sorted = [...pages].sort((a, b) => a - b);
+      let btns = '';
+      let prev = 0;
+      for (const p of sorted) {
+        if (p - prev > 1) btns += `<span class="page-ellipsis">…</span>`;
+        btns += `<button class="page-btn${p === cur ? ' active' : ''}" data-page="${p}">${p}</button>`;
+        prev = p;
+      }
+      return `<div class="pagination" id="pagination">
+        <button class="page-btn" data-page="${cur - 1}" ${cur === 1 ? 'disabled' : ''}>‹</button>
+        ${btns}
+        <button class="page-btn" data-page="${cur + 1}" ${cur === total ? 'disabled' : ''}>›</button>
+      </div>`;
+    }
+    const pageBar = buildPageBar(page, totalPages);
+
+    list.innerHTML = pageItems.map(c => {
       const score = c.total != null
         ? `<span class="conv-item-score ${scoreClass(c.total)}">${parseFloat(c.total).toFixed(1)}</span>`
         : `<span class="conv-item-score score-none">—</span>`;
@@ -76,11 +103,25 @@
       </div>`;
     }).join('');
 
+    // Append pagination after items
+    list.insertAdjacentHTML('beforeend', pageBar);
+
     list.querySelectorAll('.conv-item').forEach(el => {
       el.addEventListener('click', () => {
         list.querySelectorAll('.conv-item').forEach(x => x.classList.remove('active'));
         el.classList.add('active');
         window.openConversation?.(el.dataset.id);
+      });
+    });
+
+    list.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = parseInt(btn.dataset.page);
+        if (!isNaN(p) && p >= 1 && p <= totalPages) {
+          page = p;
+          renderList();
+          list.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       });
     });
   }
@@ -108,12 +149,13 @@
 
     const sortEl = document.getElementById('filter-sort');
 
-    q?.addEventListener('input', () => { filters.q = q.value; renderList(); });
-    lang?.addEventListener('change', () => { filters.lang = lang.value; renderList(); });
-    channel?.addEventListener('change', () => { filters.channel = channel.value; renderList(); });
-    status?.addEventListener('change', () => { filters.status = status.value; renderList(); });
-    gross?.addEventListener('change', () => { filters.gross = gross.checked; renderList(); });
-    sortEl?.addEventListener('change', () => { sortMode = sortEl.value; renderList(); });
+    const reset = () => { page = 1; renderList(); };
+    q?.addEventListener('input',  () => { filters.q       = q.value;       reset(); });
+    lang?.addEventListener('change',    () => { filters.lang    = lang.value;    reset(); });
+    channel?.addEventListener('change', () => { filters.channel = channel.value; reset(); });
+    status?.addEventListener('change',  () => { filters.status  = status.value;  reset(); });
+    gross?.addEventListener('change',   () => { filters.gross   = gross.checked; reset(); });
+    sortEl?.addEventListener('change',  () => { sortMode = sortEl.value;         reset(); });
   });
 
   window.refreshConversations = loadConversations;

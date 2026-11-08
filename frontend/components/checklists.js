@@ -76,6 +76,26 @@
   }
 
   // ── Render checklist detail ───────────────────────────────
+  function typeSelect(current, idx) {
+    const opts = [
+      ['binary',    'Да/Нет'],
+      ['binary_na', 'Да/Нет/N/A'],
+      ['scale',     'Шкала'],
+      ['flag',      'Флаг'],
+    ];
+    return `<select class="criterion-edit-input criterion-type-select" data-field="type" data-idx="${idx}" style="min-width:110px">
+      ${opts.map(([v, l]) => `<option value="${v}" ${current === v ? 'selected' : ''}>${l}</option>`).join('')}
+    </select>`;
+  }
+
+  function nextCriterionId() {
+    const nums = editingCriteria
+      .map(c => parseInt((c.id || '').replace(/\D/g, '')))
+      .filter(n => !isNaN(n));
+    const max = nums.length ? Math.max(...nums) : 0;
+    return 'c' + String(max + 1).padStart(2, '0');
+  }
+
   function renderChecklistDetail() {
     const content = document.getElementById('checklist-content');
     if (!content || !currentVersion) return;
@@ -85,10 +105,10 @@
       <tr data-idx="${i}">
         <td style="white-space:nowrap"><code style="font-size:11px;color:var(--ink-3)">${escHtml(cr.id)}</code></td>
         <td>
-          <input class="criterion-edit-input" data-field="title" data-idx="${i}"
-                 value="${escHtml(cr.title || '')}" style="width:100%">
+          <textarea class="criterion-edit-input criterion-na-input" data-field="title" data-idx="${i}"
+                    rows="2">${escHtml(cr.title || '')}</textarea>
         </td>
-        <td style="white-space:nowrap">${typeLabel(cr.type || '')}</td>
+        <td>${typeSelect(cr.type || 'binary', i)}</td>
         <td>
           <input class="criterion-edit-input weight-input" type="number" min="0" max="100"
                  data-field="weight" data-idx="${i}" value="${cr.weight || 0}">
@@ -97,34 +117,91 @@
           <textarea class="criterion-edit-input criterion-na-input" data-field="na_condition" data-idx="${i}"
                     placeholder="—" rows="2">${escHtml(cr.na_condition || '')}</textarea>
         </td>
+        <td>
+          <button class="btn-delete-crit" data-idx="${i}" title="Удалить критерий">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <path d="M2 3.5h9M5 3.5V2.5h3v1M5.5 5.5v4M7.5 5.5v4M3 3.5l.5 7h6l.5-7" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/>
+            </svg>
+          </button>
+        </td>
       </tr>`).join('');
 
     content.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <span style="font-size:12px;color:var(--ink-3)">Активная версия: <strong style="color:var(--ink)">${versionLabel}</strong>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <span style="font-size:12px;color:var(--ink-3)">
+          Версия: <strong style="color:var(--ink)">${versionLabel}</strong>
           &nbsp;·&nbsp; Канал: <strong style="color:var(--ink)">${currentChecklist.channel || '—'}</strong>
         </span>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-ghost" id="btn-save-version">Сохранить как новую версию</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" id="btn-add-criterion">+ Добавить критерий</button>
+          <button class="btn btn-ghost" id="btn-save-version">Сохранить версию</button>
           <button class="btn btn-primary" id="btn-reevaluate">Переоценить все</button>
         </div>
       </div>
       <table class="checklist-table">
         <thead>
           <tr>
-            <th>ID</th><th>Критерий</th><th>Тип</th><th>Вес</th><th>N/A условие</th>
+            <th>ID</th><th>Критерий</th><th>Тип</th><th>Вес</th><th>N/A условие</th><th></th>
           </tr>
         </thead>
-        <tbody>${rows}</tbody>
+        <tbody id="criteria-tbody">${rows}</tbody>
       </table>`;
 
     // Live edit
     content.querySelectorAll('.criterion-edit-input').forEach(inp => {
       inp.addEventListener('input', () => {
-        const idx = parseInt(inp.dataset.idx);
+        const idx   = parseInt(inp.dataset.idx);
         const field = inp.dataset.field;
         editingCriteria[idx][field] = field === 'weight' ? parseInt(inp.value) || 0 : inp.value;
       });
+    });
+
+    // Delete — inline confirm, no browser dialog
+    content.querySelectorAll('.btn-delete-crit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.idx);
+        const tr  = btn.closest('tr');
+        if (!tr) return;
+
+        // If already showing confirm, just delete
+        if (btn.dataset.confirming === '1') {
+          editingCriteria.splice(idx, 1);
+          renderChecklistDetail();
+          return;
+        }
+
+        // Show inline confirm state
+        btn.dataset.confirming = '1';
+        btn.innerHTML = 'Удалить?';
+        btn.style.color = 'var(--danger)';
+        btn.style.borderColor = 'rgba(224,82,82,.3)';
+        btn.style.background = 'var(--danger-dim)';
+        btn.style.minWidth = '72px';
+
+        // Cancel on click outside this row
+        const cancel = (e) => {
+          if (!tr.contains(e.target)) {
+            btn.dataset.confirming = '';
+            btn.textContent = '×';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+            btn.style.minWidth = '';
+            document.removeEventListener('click', cancel);
+          }
+        };
+        setTimeout(() => document.addEventListener('click', cancel), 0);
+      });
+    });
+
+    // Add
+    document.getElementById('btn-add-criterion')?.addEventListener('click', () => {
+      editingCriteria.push({
+        id: nextCriterionId(), title: 'Новый критерий',
+        type: 'binary', weight: 10, na_condition: '',
+      });
+      renderChecklistDetail();
+      document.getElementById('criteria-tbody')?.lastElementChild
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     document.getElementById('btn-save-version')?.addEventListener('click', saveNewVersion);

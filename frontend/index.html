@@ -15,9 +15,11 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-        <rect width="26" height="26" fill="#1a7a4a"/>
-        <path d="M6 13l5 5 9-9" stroke="#fff" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter"/>
+      <svg width="28" height="30" viewBox="0 0 28 30" fill="none">
+        <!-- Shield -->
+        <path d="M14 1 C11.5 0 7 1.5 4 3 L3 5 L3 17 C3 23.5 14 29 14 29 C14 29 25 23.5 25 17 L25 5 L24 3 C21 1.5 16.5 0 14 1Z" fill="#1a7a4a"/>
+        <!-- F -->
+        <path d="M10 10.5 L10 21.5 M10 10.5 L19 10.5 M10 16 L17 16" stroke="#fff" stroke-width="2.4" stroke-linecap="square"/>
       </svg>
       <div>
         <div class="logo-text">CQA</div>
@@ -76,6 +78,10 @@
     <header class="topbar">
       <div class="topbar-title" id="topbar-title">Диалоги</div>
       <div class="topbar-actions" id="topbar-actions">
+        <button class="btn btn-ghost btn-sm" id="btn-add-conv" title="Добавить диалог вручную">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
+          Добавить
+        </button>
         <button class="btn btn-ghost btn-sm" id="btn-import" title="Загрузить диалоги из API">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3 6l3.5 3.5L10 6M2 11h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
           Импорт
@@ -172,6 +178,55 @@
       </div>
     </section>
   </main>
+</div>
+
+<!-- Add conversation modal -->
+<div id="add-conv-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Добавить диалог">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Добавить диалог</span>
+      <button class="modal-close" id="modal-close" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-row">
+        <label class="modal-label">ID диалога</label>
+        <input type="text" id="new-conv-id" class="modal-input" placeholder="Авто (оставьте пустым)">
+      </div>
+      <div class="modal-row" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <label class="modal-label">Канал</label>
+          <select id="new-conv-channel" class="modal-input">
+            <option value="agent chat">Чат</option>
+            <option value="voice call">Звонок</option>
+          </select>
+        </div>
+        <div>
+          <label class="modal-label">Язык</label>
+          <select id="new-conv-lang" class="modal-input">
+            <option value="RU">RU</option>
+            <option value="KZ">KZ</option>
+            <option value="EN">EN</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <label class="modal-label" style="margin:0">Транскрипт</label>
+          <button class="btn btn-ghost btn-sm" id="btn-add-msg" type="button">+ Реплика</button>
+        </div>
+        <div id="transcript-rows"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span id="modal-error" style="font-size:12px;color:var(--danger)"></span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" id="btn-modal-cancel">Отмена</button>
+        <button class="btn btn-primary" id="btn-modal-save">Сохранить</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="app.js"></script>

@@ -1,11 +1,28 @@
 import json
 import os
 import datetime
+from pathlib import Path
 import httpx
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from typing import Optional, List
 from .db import get_db
 
 router = APIRouter()
+
+
+class TranscriptMessage(BaseModel):
+    timestamp: str = "00:00"
+    speaker: str
+    text: str
+
+
+class ConversationCreate(BaseModel):
+    id: Optional[str] = None
+    channel: str = "agent chat"
+    language: str = "RU"
+    transcript: List[TranscriptMessage]
+    audio_url: Optional[str] = None
 
 
 def _get_api_url(group_id: str) -> str:
@@ -15,24 +32,30 @@ def _get_api_url(group_id: str) -> str:
     return base
 
 
+SEED_PATH = Path(__file__).parent.parent.parent / "seed" / "sample_dialogs.json"
+
+
 @router.post("/api/datasets/{group_id}/import")
 async def import_dataset(group_id: str):
-    url = _get_api_url(group_id)
-
-    async with httpx.AsyncClient(timeout=30) as client:
+    if group_id.upper() == "SAMPLE":
+        if not SEED_PATH.exists():
+            raise HTTPException(status_code=404, detail="seed/sample_dialogs.json not found")
+        payload = json.loads(SEED_PATH.read_text(encoding="utf-8"))
+    else:
+        url = _get_api_url(group_id)
+        async with httpx.AsyncClient(timeout=30) as client:
+            try:
+                resp = await client.get(url)
+            except httpx.HTTPError as e:
+                raise HTTPException(status_code=502, detail=f"Upstream error: {e}")
+            if resp.status_code >= 400:
+                raise HTTPException(status_code=502, detail=f"Upstream HTTP {resp.status_code}")
         try:
-            resp = await client.get(url)
-        except httpx.HTTPError as e:
-            raise HTTPException(status_code=502, detail=f"Upstream error: {e}")
-        if resp.status_code >= 400:
-            raise HTTPException(status_code=502, detail=f"Upstream HTTP {resp.status_code}")
-
-    try:
-        payload = resp.json()
-    except Exception:
-        raise HTTPException(status_code=502, detail=f"Non-JSON response: {resp.text[:300]}")
-    if not payload.get("isSuccess"):
-        raise HTTPException(status_code=502, detail=f"isSuccess=false: {payload.get('error', str(payload)[:200])}")
+            payload = resp.json()
+        except Exception:
+            raise HTTPException(status_code=502, detail=f"Non-JSON response: {resp.text[:300]}")
+        if not payload.get("isSuccess"):
+            raise HTTPException(status_code=502, detail=f"isSuccess=false: {payload.get('error', str(payload)[:200])}")
 
     records = payload["data"]["records"]
     imported_at = datetime.datetime.now(datetime.UTC).isoformat()
@@ -74,6 +97,30 @@ async def import_dataset(group_id: str):
         "inserted": inserted,
         "skipped": skipped,
     }
+
+
+@router.post("/api/conversations")
+def create_conversation(body: ConversationCreate):
+    imported_at = datetime.datetime.now(datetime.UTC).isoformat()
+    conv_id = body.id or f"manual-{int(datetime.datetime.now(datetime.UTC).timestamp())}"
+    transcript = [m.model_dump() for m in body.transcript]
+
+    conn = get_db()
+    try:
+        existing = conn.execute("SELECT id FROM conversations WHERE id = ?", (conv_id,)).fetchone()
+        if existing:
+            raise HTTPException(status_code=409, detail=f"Диалог с ID «{conv_id}» уже существует")
+        conn.execute(
+            """INSERT INTO conversations (id, group_id, channel, language, transcript, audio_url, imported_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            (conv_id, "MANUAL", body.channel, body.language.upper(),
+             json.dumps(transcript, ensure_ascii=False), body.audio_url, imported_at),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    return {"id": conv_id, "channel": body.channel, "language": body.language.upper()}
 
 
 @router.get("/api/conversations")

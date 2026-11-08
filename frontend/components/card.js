@@ -103,19 +103,49 @@
   }
 
   // ── Transcript ────────────────────────────────────────
+  let showAllMsgs = false;
+  let cachedTranscript = [];
+
   function renderTranscript(transcript) {
-    return transcript.map((msg, i) => {
-      const sp    = msg.speaker || 'unknown';
-      const spLbl = { operator:'Опер.', client:'Клиент', bot:'Бот', system:'Система' }[sp] || sp;
-      return `<div class="msg" data-idx="${i}" id="msg-${i}">
-        <span class="msg-idx">${i}</span>
-        <span class="msg-speaker speaker-${sp}">${spLbl}</span>
+    cachedTranscript = transcript;
+    const spLbls = { operator:'Опер.', client:'Клиент', bot:'Бот', system:'Система' };
+    const hidden  = transcript.filter(m => m.speaker === 'bot' || m.speaker === 'system');
+    const toRender = showAllMsgs ? transcript : transcript.filter(m => m.speaker !== 'bot' && m.speaker !== 'system');
+
+    const rows = toRender.map(msg => {
+      const realIdx = transcript.indexOf(msg);
+      const sp      = msg.speaker || 'unknown';
+      return `<div class="msg" data-idx="${realIdx}" id="msg-${realIdx}">
+        <span class="msg-idx">${realIdx}</span>
+        <span class="msg-speaker speaker-${sp}">${spLbls[sp] || sp}</span>
         <div class="msg-body">
           <span class="msg-time">${escHtml(msg.timestamp || '')}</span>
           <span class="msg-text">${escHtml(msg.text || '')}</span>
         </div>
       </div>`;
     }).join('');
+
+    const toggleBtn = hidden.length > 0
+      ? `<button class="toggle-hidden-msgs" id="toggle-hidden-msgs">
+           ${showAllMsgs ? `↑ Скрыть бот/систему (${hidden.length})` : `+ ${hidden.length} бот/система`}
+         </button>`
+      : '';
+
+    return rows + toggleBtn;
+  }
+
+  function reRenderTranscript() {
+    const tb = document.getElementById('transcript-body');
+    if (!tb || !cachedTranscript.length) return;
+    tb.innerHTML = renderTranscript(cachedTranscript);
+    bindToggleBtn();
+  }
+
+  function bindToggleBtn() {
+    document.getElementById('toggle-hidden-msgs')?.addEventListener('click', () => {
+      showAllMsgs = !showAllMsgs;
+      reRenderTranscript();
+    });
   }
 
   function highlightMsg(idx) {
@@ -252,13 +282,13 @@
   // ── Open conversation ─────────────────────────────────
   async function openConversation(convId) {
     currentConvId = convId;
+    showAllMsgs   = false;  // reset on each new dialog
+    cachedTranscript = [];
 
     document.getElementById('empty-state')?.classList.add('hidden');
     const card = document.getElementById('conv-card');
     card?.classList.remove('hidden');
 
-    // Scroll main window to top so the right panel is immediately visible
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     card.innerHTML = `
       <div class="transcript-panel">
@@ -291,6 +321,9 @@
 
       document.getElementById('transcript-body').innerHTML =
         renderTranscript(conv.transcript || []);
+      bindToggleBtn();
+      // Scroll transcript panel to top (not the page)
+      document.getElementById('transcript-body')?.scrollTo({ top: 0 });
 
       if (evals?.length > 0 && evals[0].status === 'done') {
         const full = await window.appApi('/api/evaluations/' + evals[0].id);

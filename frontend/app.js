@@ -66,14 +66,16 @@ async function refreshStats() {
 
 // ── Import ────────────────────────────────────────────────
 async function doImport() {
+  const groupId = prompt('Group ID для импорта:\n• DEV — 65 диалогов из API\n• SAMPLE — 10 тестовых диалогов (локально)', 'SAMPLE');
+  if (!groupId) return;
   const btn = document.getElementById('btn-import');
   if (!btn) return;
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner" style="border-top-color:var(--ink-2)"></span> Импорт…';
   try {
-    const result = await api('/api/datasets/DEV/import', { method: 'POST' });
-    const n = result.imported ?? result.total ?? '?';
-    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3.5 3.5L11 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg> ${n} загружено`;
+    const result = await api(`/api/datasets/${encodeURIComponent(groupId)}/import`, { method: 'POST' });
+    const n = result.inserted ?? result.imported ?? result.total ?? '?';
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3.5 3.5L11 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg> +${n} диалогов`;
     window.refreshConversations?.();
     refreshStats();
     setTimeout(() => {
@@ -137,6 +139,92 @@ async function doBatch() {
   }
 }
 
+// ── Add conversation modal ────────────────────────────────
+function openAddModal() {
+  const modal = document.getElementById('add-conv-modal');
+  if (!modal) return;
+  // Reset form
+  document.getElementById('new-conv-id').value = '';
+  document.getElementById('new-conv-channel').value = 'agent chat';
+  document.getElementById('new-conv-lang').value = 'RU';
+  document.getElementById('transcript-rows').innerHTML = '';
+  document.getElementById('modal-error').textContent = '';
+  // Add two default rows: operator + client
+  addTranscriptRow('operator', '');
+  addTranscriptRow('client', '');
+  modal.classList.remove('hidden');
+  document.getElementById('new-conv-id').focus();
+}
+
+function closeAddModal() {
+  document.getElementById('add-conv-modal')?.classList.add('hidden');
+}
+
+let msgRowIdx = 0;
+
+function addTranscriptRow(speaker = 'operator', text = '') {
+  const wrap = document.getElementById('transcript-rows');
+  if (!wrap) return;
+  const idx = msgRowIdx++;
+  const div = document.createElement('div');
+  div.className = 'transcript-row-wrap';
+  div.dataset.rowIdx = idx;
+  div.innerHTML = `
+    <select class="modal-input msg-speaker" style="font-size:11px">
+      <option value="operator" ${speaker==='operator'?'selected':''}>Оператор</option>
+      <option value="client"   ${speaker==='client'  ?'selected':''}>Клиент</option>
+      <option value="bot"      ${speaker==='bot'     ?'selected':''}>Бот</option>
+      <option value="system"   ${speaker==='system'  ?'selected':''}>Система</option>
+    </select>
+    <input class="modal-input msg-ts" type="text" placeholder="00:00" value="00:00" style="font-size:12px;font-family:var(--mono)">
+    <textarea class="modal-input msg-text" rows="2" placeholder="Текст реплики…" style="resize:vertical">${text}</textarea>
+    <button class="msg-del-btn" type="button" title="Удалить реплику">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/>
+      </svg>
+    </button>`;
+  div.querySelector('.msg-del-btn').addEventListener('click', () => div.remove());
+  wrap.appendChild(div);
+}
+
+async function saveNewConversation() {
+  const idVal     = document.getElementById('new-conv-id').value.trim();
+  const channel   = document.getElementById('new-conv-channel').value;
+  const language  = document.getElementById('new-conv-lang').value;
+  const errEl     = document.getElementById('modal-error');
+  const saveBtn   = document.getElementById('btn-modal-save');
+  errEl.textContent = '';
+
+  // Collect transcript rows
+  const rows = [...document.querySelectorAll('#transcript-rows .transcript-row-wrap')];
+  const transcript = rows.map(row => ({
+    speaker:   row.querySelector('.msg-speaker').value,
+    timestamp: row.querySelector('.msg-ts').value.trim() || '00:00',
+    text:      row.querySelector('.msg-text').value.trim(),
+  })).filter(m => m.text);
+
+  if (!transcript.length) {
+    errEl.textContent = 'Добавьте хотя бы одну реплику с текстом';
+    return;
+  }
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Сохранение…';
+  try {
+    const body = { channel, language, transcript };
+    if (idVal) body.id = idVal;
+    await api('/api/conversations', { method: 'POST', body: JSON.stringify(body) });
+    closeAddModal();
+    window.refreshConversations?.();
+    refreshStats();
+  } catch (e) {
+    errEl.textContent = e.message;
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Сохранить';
+  }
+}
+
 // ── Score odometer animation ──────────────────────────────
 function animateScore(el, value) {
   if (!el || value === null || value === undefined) return;
@@ -156,8 +244,19 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addEventListener('click', () => setRole(el.dataset.role))
   );
 
+  document.getElementById('btn-add-conv')?.addEventListener('click', openAddModal);
   document.getElementById('btn-import')?.addEventListener('click', doImport);
   document.getElementById('btn-batch')?.addEventListener('click', doBatch);
+
+  // Modal controls
+  document.getElementById('modal-close')?.addEventListener('click', closeAddModal);
+  document.getElementById('btn-modal-cancel')?.addEventListener('click', closeAddModal);
+  document.getElementById('btn-modal-save')?.addEventListener('click', saveNewConversation);
+  document.getElementById('btn-add-msg')?.addEventListener('click', () => addTranscriptRow('operator'));
+  // Close on backdrop click
+  document.getElementById('add-conv-modal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeAddModal();
+  });
 
   switchView('conversations');
   refreshStats();

@@ -6,57 +6,7 @@
  "status": "open",
  "history": [
   {
-   "at": "2026-11-08T01:12:53.911Z",
-   "mode": "hook",
-   "host": "claude",
-   "status": "fail",
-   "fails": 38,
-   "round": 0,
-   "reused": false,
-   "stopHookActive": false,
-   "decision": "block",
-   "reason": "38 FAILs remain (not a round: the gate has not been run by hand in this build yet):"
-  },
-  {
-   "at": "2026-11-08T01:19:59.397Z",
-   "mode": "manual",
-   "status": "fail",
-   "fails": 16,
-   "round": 1,
-   "reused": false,
-   "stopHookActive": false
-  },
-  {
-   "at": "2026-11-08T01:22:00.757Z",
-   "mode": "manual",
-   "status": "fail",
-   "fails": 15,
-   "round": 2,
-   "reused": false,
-   "stopHookActive": false
-  },
-  {
-   "at": "2026-11-08T01:23:03.876Z",
-   "mode": "hook",
-   "host": "claude",
-   "status": "open",
-   "fails": 15,
-   "round": 3,
-   "reused": false,
-   "stopHookActive": true,
-   "decision": "block",
-   "reason": "rounds used up (3 of 3), 15 FAILs open:"
-  },
-  {
-   "at": "2026-11-08T01:23:17.476Z",
-   "mode": "hook",
-   "host": "claude",
-   "decision": "allow",
-   "reason": "no build is active here",
-   "stopHookActive": true
-  },
-  {
-   "at": "2026-11-08T01:23:20.699Z",
+   "at": "2026-11-08T02:32:33.864Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",
@@ -64,7 +14,7 @@
    "stopHookActive": false
   },
   {
-   "at": "2026-11-08T01:45:26.623Z",
+   "at": "2026-11-08T02:34:22.868Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",
@@ -72,7 +22,7 @@
    "stopHookActive": false
   },
   {
-   "at": "2026-11-08T01:51:02.226Z",
+   "at": "2026-11-08T02:37:24.052Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",
@@ -80,7 +30,7 @@
    "stopHookActive": false
   },
   {
-   "at": "2026-11-08T01:56:31.379Z",
+   "at": "2026-11-08T02:38:51.609Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",
@@ -88,7 +38,7 @@
    "stopHookActive": false
   },
   {
-   "at": "2026-11-08T02:00:37.512Z",
+   "at": "2026-11-08T02:40:13.153Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",
@@ -96,7 +46,7 @@
    "stopHookActive": false
   },
   {
-   "at": "2026-11-08T02:04:41.922Z",
+   "at": "2026-11-08T02:41:42.659Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",
@@ -104,7 +54,7 @@
    "stopHookActive": false
   },
   {
-   "at": "2026-11-08T02:08:54.324Z",
+   "at": "2026-11-08T02:49:48.192Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",
@@ -112,7 +62,103 @@
    "stopHookActive": false
   },
   {
-   "at": "2026-11-08T02:17:23.281Z",
+   "at": "2026-11-08T02:53:52.206Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T02:56:32.568Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T02:58:17.315Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T03:43:34.934Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T03:45:23.244Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T03:46:17.802Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T03:51:51.470Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T03:56:00.226Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T03:56:49.186Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T03:57:11.124Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:03:59.254Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:06:47.300Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:08:28.863Z",
    "mode": "hook",
    "host": "claude",
    "decision": "allow",

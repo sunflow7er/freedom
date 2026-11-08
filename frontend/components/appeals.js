@@ -1,7 +1,8 @@
 // Appeals view — list open appeals, submit decision (reviewer role)
 (function () {
 
-  let appeals = [];
+  let appeals      = [];   // all loaded appeals
+  let filterStatus = '';   // current filter, applied client-side
 
   const container = () => document.getElementById('appeals-view');
 
@@ -23,18 +24,30 @@
 
     const isReviewer = window.appState?.role === 'reviewer';
 
-    if (!appeals.length) {
-      c.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-          <h2 style="font-size:14px;font-weight:600">Апелляции</h2>
+    // Client-side filter — no re-fetch needed
+    const visible = filterStatus ? appeals.filter(a => a.status === filterStatus) : appeals;
+
+    const toolbar = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <h2 style="font-size:14px;font-weight:600">Апелляции</h2>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select id="filter-appeal-status" class="filter-select" style="width:140px">
+            <option value=""     ${filterStatus===''         ?'selected':''}>Все статусы</option>
+            <option value="open" ${filterStatus==='open'     ?'selected':''}>Открытые</option>
+            <option value="approved" ${filterStatus==='approved'?'selected':''}>Одобренные</option>
+            <option value="rejected" ${filterStatus==='rejected'?'selected':''}>Отклонённые</option>
+          </select>
           <button class="btn btn-ghost" id="btn-refresh-appeals">Обновить</button>
         </div>
-        <div class="list-loading">Нет апелляций</div>`;
-      document.getElementById('btn-refresh-appeals')?.addEventListener('click', loadAppeals);
+      </div>`;
+
+    if (!visible.length) {
+      c.innerHTML = toolbar + '<div class="list-loading">Нет апелляций</div>';
+      bindToolbar();
       return;
     }
 
-    const cards = appeals.map(a => {
+    const cards = visible.map(a => {
       const decisionHtml = a.decision
         ? `<div style="margin-top:10px;padding:10px;background:var(--bg-2);border-radius:var(--r);font-size:12px">
             <div style="color:var(--ink-2);margin-bottom:4px">
@@ -72,31 +85,24 @@
       </div>`;
     }).join('');
 
-    c.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-        <h2 style="font-size:14px;font-weight:600">Апелляции</h2>
-        <div style="display:flex;gap:8px;align-items:center">
-          <select id="filter-appeal-status" class="filter-select" style="width:140px">
-            <option value="">Все статусы</option>
-            <option value="open">Открытые</option>
-            <option value="approved">Одобренные</option>
-            <option value="rejected">Отклонённые</option>
-          </select>
-          <button class="btn btn-ghost" id="btn-refresh-appeals">Обновить</button>
-        </div>
-      </div>
-      <div id="appeals-list">${cards}</div>`;
+    c.innerHTML = toolbar + `<div id="appeals-list">${cards}</div>`;
 
+    bindToolbar();
+
+    bindDecisionButtons();
+  }
+
+  function bindToolbar() {
+    const c = container();
     document.getElementById('btn-refresh-appeals')?.addEventListener('click', loadAppeals);
-
-    document.getElementById('filter-appeal-status')?.addEventListener('change', async (e) => {
-      const status = e.target.value;
-      try {
-        appeals = await window.appApi('/api/appeals' + (status ? `?status=${status}` : ''));
-        renderAppeals();
-      } catch {}
+    document.getElementById('filter-appeal-status')?.addEventListener('change', (e) => {
+      filterStatus = e.target.value;
+      renderAppeals();
     });
+  }
 
+  function bindDecisionButtons() {
+    const c = container();
     // Decision buttons
     c.querySelectorAll('[data-action]').forEach(btn => {
       btn.addEventListener('click', async () => {
