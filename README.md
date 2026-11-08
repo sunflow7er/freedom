@@ -17,24 +17,7 @@
 
 ---
 
-## Деплой на Railway (рекомендуется)
-
-1. Зайдите на [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo** → выберите этот репозиторий
-2. В разделе **Variables** добавьте:
-
-| Переменная | Значение |
-|---|---|
-| `DATASET_API_URL` | URL от организаторов (включая `sig=`) |
-| `ANTHROPIC_API_KEY` | `sk-ant-...` |
-| `LLM_PROVIDER` | `anthropic` |
-| `AUTO_IMPORT` | `1` |
-
-3. Railway автоматически поднимет сервер. Ссылка появится в разделе **Settings → Domains**.
-4. После старта диалоги загрузятся автоматически.
-
----
-
-## Локальный запуск
+## Запуск
 
 ### 1. Требования
 - Python 3.11+
