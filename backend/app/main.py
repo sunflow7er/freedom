@@ -167,31 +167,6 @@ def export_results(group_id: str):
     }
 
 
-@app.get("/api/debug/whisper")
-def debug_whisper():
-    """Debug endpoint: show exactly why Whisper is unavailable."""
-    import sys
-    result = {"python": sys.version, "steps": {}}
-
-    for pkg in ["av", "ctranslate2", "faster_whisper", "numpy"]:
-        try:
-            mod = __import__(pkg)
-            result["steps"][pkg] = getattr(mod, "__version__", "ok")
-        except Exception as e:
-            result["steps"][pkg] = f"ERROR: {e}"
-
-    # Test our patch
-    try:
-        from . import audio_analysis
-        audio_analysis._patch_av_if_missing()
-        result["steps"]["patch_av"] = "ok"
-    except Exception as e:
-        result["steps"]["patch_av"] = f"ERROR: {e}"
-
-    result["whisper_available"] = audio_analysis.is_available()
-    return result
-
-
 @app.get("/api/health")
 def health() -> JSONResponse:
     return JSONResponse({
