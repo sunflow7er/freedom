@@ -26,10 +26,17 @@ class ConversationCreate(BaseModel):
 
 
 def _get_api_url(group_id: str) -> str:
+    import re
     base = os.getenv("DATASET_API_URL", "").strip()
     if not base:
         raise HTTPException(status_code=500, detail="DATASET_API_URL not set in .env")
-    return base
+    # Substitute group_id in the URL
+    if "group_id=" in base:
+        url = re.sub(r"group_id=[^&]*", f"group_id={group_id}", base)
+    else:
+        sep = "&" if "?" in base else "?"
+        url = f"{base}{sep}group_id={group_id}"
+    return url
 
 
 SEED_PATH = Path(__file__).parent.parent.parent / "seed" / "sample_dialogs.json"
