@@ -17,11 +17,28 @@
 
 ---
 
-## Быстрый старт
+## Деплой на Railway (рекомендуется)
+
+1. Зайдите на [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo** → выберите этот репозиторий
+2. В разделе **Variables** добавьте:
+
+| Переменная | Значение |
+|---|---|
+| `DATASET_API_URL` | URL от организаторов (включая `sig=`) |
+| `ANTHROPIC_API_KEY` | `sk-ant-...` |
+| `LLM_PROVIDER` | `anthropic` |
+| `AUTO_IMPORT` | `1` |
+
+3. Railway автоматически поднимет сервер. Ссылка появится в разделе **Settings → Domains**.
+4. После старта диалоги загрузятся автоматически.
+
+---
+
+## Локальный запуск
 
 ### 1. Требования
 - Python 3.11+
-- Ключ Anthropic API (`claude-sonnet-4-5`)
+- Ключ Anthropic API
 
 ### 2. Установка
 
@@ -32,8 +49,6 @@ pip install -r requirements.txt
 ```
 
 ### 3. Настройка `.env`
-
-Создайте файл `.env` в корне проекта:
 
 ```env
 DATASET_API_URL=<URL от организаторов, включая sig=>
