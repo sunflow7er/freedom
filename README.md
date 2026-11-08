@@ -3,6 +3,8 @@
 Система оценки качества работы операторов поддержки **Freedom Broker**.  
 Анализирует диалоги (чаты и звонки) с помощью LLM, оценивает по настраиваемому чек-листу, поддерживает апелляции.
 
+🔗 **[freedom-production-80ab.up.railway.app](https://freedom-production-80ab.up.railway.app)**
+
 ---
 
 ## Скриншоты
@@ -83,5 +85,3 @@ frontend/         # HTML/CSS/JS, Web Components
 seed/             # Дефолтные чек-листы (чат, звонок), тестовые диалоги
 data/             # cqa.db (в .gitignore)
 ```
-
-> Секреты (`DATASET_API_URL`, `ANTHROPIC_API_KEY`) — только в `.env`, не коммитятся.
