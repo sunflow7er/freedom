@@ -16,13 +16,14 @@ def create_tables() -> None:
     conn = get_db()
     conn.executescript("""
     CREATE TABLE IF NOT EXISTS conversations (
-        id          TEXT PRIMARY KEY,
-        group_id    TEXT NOT NULL,
-        channel     TEXT NOT NULL,
-        language    TEXT NOT NULL,
-        transcript  TEXT NOT NULL,
-        audio_url   TEXT,
-        imported_at TEXT NOT NULL
+        id              TEXT PRIMARY KEY,
+        group_id        TEXT NOT NULL,
+        channel         TEXT NOT NULL,
+        language        TEXT NOT NULL,
+        transcript      TEXT NOT NULL,
+        audio_url       TEXT,
+        audio_analysis  TEXT,
+        imported_at     TEXT NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS checklists (
@@ -91,4 +92,11 @@ def create_tables() -> None:
     );
     """)
     conn.commit()
+
+    # Migration: add audio_analysis column if missing (for existing databases)
+    cols = [r[1] for r in conn.execute("PRAGMA table_info(conversations)").fetchall()]
+    if "audio_analysis" not in cols:
+        conn.execute("ALTER TABLE conversations ADD COLUMN audio_analysis TEXT")
+        conn.commit()
+
     conn.close()

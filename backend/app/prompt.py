@@ -68,7 +68,7 @@ def format_criterion(crit: dict[str, Any]) -> str:
     return "\n".join(parts)
 
 
-def build_prompt(checklist_config: dict, transcript: list[dict]) -> tuple[str, str]:
+def build_prompt(checklist_config: dict, transcript: list[dict], audio_metrics: dict | None = None) -> tuple[str, str]:
     """
     Build system + user prompts for evaluation.
     Returns (system_prompt, user_prompt).
@@ -80,8 +80,13 @@ def build_prompt(checklist_config: dict, transcript: list[dict]) -> tuple[str, s
 
     criteria_text = "\n\n".join(format_criterion(c) for c in criteria)
 
+    audio_block = ""
+    if audio_metrics and channel == "voice call":
+        from .audio_analysis import build_audio_context
+        audio_block = build_audio_context(audio_metrics) + "\n"
+
     user_prompt = f"""Channel: {channel}
-Transcript ({len(transcript)} messages):
+{audio_block}Transcript ({len(transcript)} messages):
 {transcript_text}
 
 ---

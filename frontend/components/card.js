@@ -330,6 +330,99 @@
     }
   }
 
+  // ── Audio player ──────────────────────────────────────
+  function buildAudioPanel(audioUrl, convId) {
+    return `
+      <div class="audio-panel" id="audio-panel">
+        <div class="audio-panel-header">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M5.5 4.5l4 2.5-4 2.5V4.5z" fill="currentColor"/>
+          </svg>
+          <span>Аудиозапись</span>
+        </div>
+        <audio id="call-audio" src="${escHtml(audioUrl)}" controls style="width:100%;margin-top:6px;height:32px"></audio>
+        <div class="audio-actions">
+          <button class="btn btn-ghost btn-sm" id="btn-analyze-audio" data-conv="${convId}">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <path d="M1 10V7M4 10V4M7 10V1M10 10V5M13 10V3" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/>
+            </svg>
+            Анализировать дикцию
+          </button>
+        </div>
+        <div id="audio-metrics" class="audio-metrics hidden"></div>
+      </div>`;
+  }
+
+  function renderAudioMetrics(m) {
+    const scoreColor = m.diction_score >= 8.5 ? 'var(--brand-light)' : m.diction_score >= 6.5 ? 'var(--ink)' : 'var(--danger)';
+    const scoreLabel = m.diction_score >= 8.5 ? 'Отлично' : m.diction_score >= 6.5 ? 'Хорошо' : 'Слабая';
+    const wpmColor   = m.speech_rate_wpm >= 80 && m.speech_rate_wpm <= 180 ? 'var(--brand-light)' : 'var(--warning, #d97706)';
+    const pauseColor = m.long_pause_count === 0 ? 'var(--brand-light)' : m.long_pause_count <= 2 ? 'var(--warning, #d97706)' : 'var(--danger)';
+
+    return `
+      <div class="audio-metrics-grid">
+        <div class="audio-metric">
+          <span class="audio-metric-val" style="color:${scoreColor}">${m.diction_score}/10</span>
+          <span class="audio-metric-label">Дикция<br><small>${scoreLabel}</small></span>
+        </div>
+        <div class="audio-metric">
+          <span class="audio-metric-val" style="color:${wpmColor}">${m.speech_rate_wpm}</span>
+          <span class="audio-metric-label">Слов/мин<br><small>норма 100–160</small></span>
+        </div>
+        <div class="audio-metric">
+          <span class="audio-metric-val" style="color:${pauseColor}">${m.pause_count}</span>
+          <span class="audio-metric-label">Паузы ≥2с<br><small>${m.long_pause_count} длинных</small></span>
+        </div>
+        <div class="audio-metric">
+          <span class="audio-metric-val">${m.filler_word_count}</span>
+          <span class="audio-metric-label">Слова-паразиты</span>
+        </div>
+      </div>
+      <div class="audio-metric-note">
+        Анализ: Whisper ${m.model || 'tiny'} · ${Math.round(m.total_duration_sec / 60)} мин ${Math.round(m.total_duration_sec % 60)} сек
+      </div>`;
+  }
+
+  async function initAudioAnalysis(convId) {
+    const btn = document.getElementById('btn-analyze-audio');
+    const metricsEl = document.getElementById('audio-metrics');
+    if (!btn || !metricsEl) return;
+
+    // Check if already cached
+    try {
+      const status = await window.appApi(`/api/conversations/${convId}/audio-status`);
+      if (status.cached) {
+        metricsEl.innerHTML = renderAudioMetrics(status.cached);
+        metricsEl.classList.remove('hidden');
+        btn.textContent = '✓ Анализ готов';
+        btn.disabled = true;
+        return;
+      }
+      if (!status.whisper_available) {
+        btn.textContent = 'Whisper не установлен';
+        btn.disabled = true;
+        return;
+      }
+    } catch {}
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Whisper анализирует…';
+      try {
+        const result = await window.appApi(`/api/conversations/${convId}/analyze-audio`, { method: 'POST' });
+        metricsEl.innerHTML = renderAudioMetrics(result);
+        metricsEl.classList.remove('hidden');
+        btn.textContent = '✓ Анализ готов';
+        showToast('Анализ аудио завершён', 'success');
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = 'Анализировать дикцию';
+        showToast('Ошибка анализа: ' + e.message, 'error');
+      }
+    });
+  }
+
   // ── Open conversation ─────────────────────────────────
   async function openConversation(convId) {
     currentConvId = convId;
@@ -369,6 +462,17 @@
         window.appApi('/api/conversations/' + convId),
         window.appApi('/api/conversations/' + convId + '/evaluations'),
       ]);
+
+      // Inject audio player for voice calls
+      if (conv.channel === 'voice call' && conv.audio_url) {
+        const tb = document.getElementById('transcript-body');
+        if (tb) {
+          const audioDiv = document.createElement('div');
+          audioDiv.innerHTML = buildAudioPanel(conv.audio_url, convId);
+          tb.parentElement.insertBefore(audioDiv.firstElementChild, tb);
+          initAudioAnalysis(convId);
+        }
+      }
 
       document.getElementById('transcript-body').innerHTML =
         renderTranscript(conv.transcript || []);

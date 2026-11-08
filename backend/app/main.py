@@ -9,12 +9,14 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 
+from fastapi import HTTPException
 from dotenv import load_dotenv
 from .db import create_tables, get_db
 from .dataset import router as dataset_router
 from .checklists import router as checklists_router, seed_checklists
 from .evaluation import router as evaluation_router
 from .appeals import router as appeals_router
+from . import audio_analysis
 
 load_dotenv(Path(__file__).parent.parent.parent / ".env", override=True)
 
@@ -98,6 +100,75 @@ def health() -> JSONResponse:
         "status": "ok",
         "time": datetime.datetime.now(datetime.UTC).isoformat(),
     })
+
+
+@app.post("/api/conversations/{conv_id}/analyze-audio")
+async def analyze_audio_endpoint(conv_id: str):
+    """Run Whisper analysis on a voice call's audio. Results cached in DB."""
+    if not audio_analysis.is_available():
+        raise HTTPException(503, "faster-whisper не установлен")
+
+    conn = get_db()
+    try:
+        row = conn.execute(
+            "SELECT audio_url, channel, audio_analysis FROM conversations WHERE id = ?",
+            (conv_id,),
+        ).fetchone()
+    finally:
+        conn.close()
+
+    if not row:
+        raise HTTPException(404, "Диалог не найден")
+    if row["channel"] != "voice call":
+        raise HTTPException(400, "Только для звонков")
+    if not row["audio_url"]:
+        raise HTTPException(400, "Нет ссылки на аудио")
+
+    # Return cached result
+    if row["audio_analysis"]:
+        return json.loads(row["audio_analysis"])
+
+    # Run Whisper
+    try:
+        result = audio_analysis.analyze_call_audio(row["audio_url"])
+    except Exception as e:
+        raise HTTPException(500, f"Ошибка анализа аудио: {e}")
+
+    conn = get_db()
+    try:
+        conn.execute(
+            "UPDATE conversations SET audio_analysis = ? WHERE id = ?",
+            (json.dumps(result, ensure_ascii=False), conv_id),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    return result
+
+
+@app.get("/api/conversations/{conv_id}/audio-status")
+def audio_status_endpoint(conv_id: str):
+    """Check if audio analysis is available and cached."""
+    conn = get_db()
+    try:
+        row = conn.execute(
+            "SELECT channel, audio_url, audio_analysis FROM conversations WHERE id = ?",
+            (conv_id,),
+        ).fetchone()
+    finally:
+        conn.close()
+
+    if not row:
+        raise HTTPException(404, "Диалог не найден")
+
+    return {
+        "is_voice_call": row["channel"] == "voice call",
+        "has_audio_url": bool(row["audio_url"]),
+        "is_analyzed": bool(row["audio_analysis"]),
+        "whisper_available": audio_analysis.is_available(),
+        "cached": json.loads(row["audio_analysis"]) if row["audio_analysis"] else None,
+    }
 
 
 frontend_path = Path(__file__).parent.parent.parent / "frontend"

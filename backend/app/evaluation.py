@@ -65,6 +65,7 @@ async def evaluate_conversation(req: EvaluateRequest):
             raise HTTPException(404, f"Conversation {req.conversation_id!r} not found")
         conv = dict(conv_row)
         transcript = json.loads(conv["transcript"])
+        audio_metrics = json.loads(conv["audio_analysis"]) if conv.get("audio_analysis") else None
 
         # Load checklist version
         cv = _get_checklist_version(conn, req.conversation_id, req.checklist_version_id)
@@ -73,8 +74,8 @@ async def evaluate_conversation(req: EvaluateRequest):
         criteria_map = {c["id"]: c for c in criteria}
         cv_id = cv["id"]
 
-        # Build prompt
-        system_prompt, user_prompt = build_prompt(checklist_config, transcript)
+        # Build prompt (include audio metrics for voice calls if analyzed)
+        system_prompt, user_prompt = build_prompt(checklist_config, transcript, audio_metrics)
         prompt_hash = hashlib.sha256((system_prompt + user_prompt).encode()).hexdigest()
 
         # Check if already evaluated with same prompt

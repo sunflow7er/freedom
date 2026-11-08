@@ -1419,6 +1419,71 @@ body {
 }
 .msg-del-btn:hover { color: var(--danger); }
 
+/* ── Audio panel ────────────────────────────────────────── */
+.audio-panel {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.audio-panel-header {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 600;
+  color: var(--ink-2); text-transform: uppercase; letter-spacing: .05em;
+  margin-bottom: 2px;
+}
+.audio-panel audio {
+  filter: brightness(.85) contrast(1.1);
+  border-radius: 4px;
+}
+.audio-actions {
+  margin-top: 8px;
+}
+.audio-metrics {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.audio-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.audio-metric {
+  background: var(--bg-3);
+  border-radius: var(--r);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+}
+.audio-metric-val {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--mono);
+  color: var(--ink);
+  line-height: 1;
+}
+.audio-metric-label {
+  font-size: 10px;
+  color: var(--ink-3);
+  line-height: 1.3;
+}
+.audio-metric-label small {
+  display: block;
+  color: var(--ink-3);
+  opacity: 0.7;
+}
+.audio-metric-note {
+  font-size: 10px;
+  color: var(--ink-3);
+  text-align: right;
+}
+
 /* ── Utility ────────────────────────────────────────────── */
 .hidden   { display: none !important; }
 .text-muted { color: var(--ink-3); }
