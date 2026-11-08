@@ -31,12 +31,39 @@ async def auto_import():
     finally:
         conn.close()
 
-    # Try SAMPLE seed first (always available)
+    imported_at = datetime.datetime.now(datetime.UTC).isoformat()
+
+    # Try real API first
+    api_url = os.getenv("DATASET_API_URL", "").strip()
+    if api_url:
+        try:
+            async with httpx.AsyncClient(timeout=20) as client:
+                resp = await client.get(api_url)
+            payload = resp.json()
+            if payload.get("isSuccess"):
+                records = payload["data"]["records"]
+                conn = get_db()
+                try:
+                    for rec in records:
+                        conn.execute(
+                            "INSERT OR IGNORE INTO conversations (id, group_id, channel, language, transcript, audio_url, imported_at) VALUES (?,?,?,?,?,?,?)",
+                            (rec["conversation_id"], payload["data"]["dataset_group_id"],
+                             rec["channel"], rec["language"],
+                             json.dumps(rec["transcript"], ensure_ascii=False),
+                             rec.get("audio_url"), imported_at),
+                        )
+                    conn.commit()
+                finally:
+                    conn.close()
+                return  # API succeeded — done
+        except Exception:
+            pass  # fall through to SAMPLE
+
+    # Fallback: load SAMPLE seed if API unavailable
     seed_path = Path(__file__).parent.parent.parent / "seed" / "sample_dialogs.json"
     if seed_path.exists():
         payload = json.loads(seed_path.read_text(encoding="utf-8"))
         records = payload["data"]["records"]
-        imported_at = datetime.datetime.now(datetime.UTC).isoformat()
         conn = get_db()
         try:
             for rec in records:
@@ -48,34 +75,6 @@ async def auto_import():
             conn.commit()
         finally:
             conn.close()
-
-    # Also try real API if URL is set
-    api_url = os.getenv("DATASET_API_URL", "").strip()
-    if not api_url:
-        return
-    try:
-        async with httpx.AsyncClient(timeout=20) as client:
-            resp = await client.get(api_url)
-        payload = resp.json()
-        if not payload.get("isSuccess"):
-            return
-        records = payload["data"]["records"]
-        imported_at = datetime.datetime.now(datetime.UTC).isoformat()
-        conn = get_db()
-        try:
-            for rec in records:
-                conn.execute(
-                    "INSERT OR IGNORE INTO conversations (id, group_id, channel, language, transcript, audio_url, imported_at) VALUES (?,?,?,?,?,?,?)",
-                    (rec["conversation_id"], payload["data"]["dataset_group_id"],
-                     rec["channel"], rec["language"],
-                     json.dumps(rec["transcript"], ensure_ascii=False),
-                     rec.get("audio_url"), imported_at),
-                )
-            conn.commit()
-        finally:
-            conn.close()
-    except Exception:
-        pass  # API unavailable — SAMPLE dialogs already loaded
 
 
 @asynccontextmanager
