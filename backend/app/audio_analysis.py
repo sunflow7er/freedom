@@ -50,10 +50,10 @@ def analyze_call_audio(audio_url: str) -> dict:
 
     try:
         model = _get_model()
+        # vad_filter requires onnxruntime — disabled for compatibility
         segments_gen, info = model.transcribe(
             tmp_path,
             word_timestamps=True,
-            vad_filter=True,
         )
         segments = list(segments_gen)
 
