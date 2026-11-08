@@ -21,30 +21,35 @@
         <!-- F -->
         <path d="M10 10.5 L10 21.5 M10 10.5 L19 10.5 M10 16 L17 16" stroke="#fff" stroke-width="2.4" stroke-linecap="square"/>
       </svg>
-      <div>
+      <div class="logo-text-wrap">
         <div class="logo-text">CQA</div>
         <div class="logo-sub">Freedom Broker</div>
       </div>
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Свернуть панель" title="Свернуть / развернуть">
+        <svg class="toggle-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+        </svg>
+      </button>
     </div>
 
     <nav class="sidebar-nav">
       <button class="nav-item active" data-view="conversations" aria-current="page">
         <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h9M3 15h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
-        Диалоги
+        <span class="nav-label">Диалоги</span>
         <span class="nav-badge" id="nav-badge-convs">—</span>
       </button>
       <button class="nav-item" data-view="checklists">
         <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="4" width="4" height="4" stroke="currentColor" stroke-width="1.5"/><rect x="4" y="12" width="4" height="4" stroke="currentColor" stroke-width="1.5"/><path d="M11 6h5M11 14h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
-        Чек-листы
+        <span class="nav-label">Чек-листы</span>
       </button>
       <button class="nav-item" data-view="appeals">
         <svg viewBox="0 0 20 20" fill="none"><path d="M5 10h10M10 5l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"/></svg>
-        Апелляции
+        <span class="nav-label">Апелляции</span>
         <span class="nav-badge" id="nav-badge-appeals" style="display:none"></span>
       </button>
       <button class="nav-item" data-view="analytics">
         <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="12" width="3" height="5" stroke="currentColor" stroke-width="1.5"/><rect x="8.5" y="8" width="3" height="9" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="4" width="3" height="13" stroke="currentColor" stroke-width="1.5"/></svg>
-        Аналитика
+        <span class="nav-label">Аналитика</span>
       </button>
     </nav>
 

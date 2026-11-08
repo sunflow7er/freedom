@@ -249,6 +249,22 @@ function animateScore(el, value) {
   el.classList.add('rolling');
 }
 
+// ── Sidebar toggle ────────────────────────────────────────
+function initSidebarToggle() {
+  const app = document.querySelector('.app');
+  const btn = document.getElementById('sidebar-toggle');
+  if (!app || !btn) return;
+
+  const collapsed = localStorage.getItem('sidebar-collapsed') === '1';
+  if (collapsed) app.classList.add('sidebar-collapsed');
+
+  btn.addEventListener('click', () => {
+    app.classList.toggle('sidebar-collapsed');
+    const isNowCollapsed = app.classList.contains('sidebar-collapsed');
+    try { localStorage.setItem('sidebar-collapsed', isNowCollapsed ? '1' : '0'); } catch {}
+  });
+}
+
 // ── Init ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.nav-item').forEach(el =>
@@ -272,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === e.currentTarget) closeAddModal();
   });
 
+  initSidebarToggle();
   switchView('conversations');
   refreshStats();
 });
