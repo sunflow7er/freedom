@@ -1,33 +1,239 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-radius="sharp">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CQA — Оценка качества диалогов</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CQA — Freedom Broker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="app-header">
-    <div class="header-brand">
-      <span class="brand-logo">F</span>
-      <span class="brand-name">CQA</span>
-      <span class="brand-sub">Оценка качества диалогов</span>
-    </div>
-    <div class="header-role">
-      <span>Роль:</span>
-      <select id="role-select">
-        <option value="analyst">Аналитик</option>
-        <option value="reviewer">Проверяющий</option>
-      </select>
-    </div>
-  </header>
 
-  <main class="app-main">
-    <p style="color: var(--text-secondary); padding: 2rem;">
-      Система запускается… Убедитесь что бэкенд запущен на <code>http://localhost:8000</code>
-    </p>
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg width="28" height="30" viewBox="0 0 28 30" fill="none">
+        <!-- Shield -->
+        <path d="M14 1 C11.5 0 7 1.5 4 3 L3 5 L3 17 C3 23.5 14 29 14 29 C14 29 25 23.5 25 17 L25 5 L24 3 C21 1.5 16.5 0 14 1Z" fill="#1a7a4a"/>
+        <!-- F -->
+        <path d="M10 10.5 L10 21.5 M10 10.5 L19 10.5 M10 16 L17 16" stroke="#fff" stroke-width="2.4" stroke-linecap="square"/>
+      </svg>
+      <div>
+        <div class="logo-text">CQA</div>
+        <div class="logo-sub">Freedom Broker</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-view="conversations" aria-current="page">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h9M3 15h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+        Диалоги
+        <span class="nav-badge" id="nav-badge-convs">—</span>
+      </button>
+      <button class="nav-item" data-view="checklists">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="4" width="4" height="4" stroke="currentColor" stroke-width="1.5"/><rect x="4" y="12" width="4" height="4" stroke="currentColor" stroke-width="1.5"/><path d="M11 6h5M11 14h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+        Чек-листы
+      </button>
+      <button class="nav-item" data-view="appeals">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M5 10h10M10 5l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"/></svg>
+        Апелляции
+        <span class="nav-badge" id="nav-badge-appeals" style="display:none"></span>
+      </button>
+      <button class="nav-item" data-view="analytics">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="12" width="3" height="5" stroke="currentColor" stroke-width="1.5"/><rect x="8.5" y="8" width="3" height="9" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="4" width="3" height="13" stroke="currentColor" stroke-width="1.5"/></svg>
+        Аналитика
+      </button>
+    </nav>
+
+    <div class="sidebar-stats" id="sidebar-stats">
+      <div class="stat-row">
+        <span class="stat-label">Диалогов</span>
+        <span class="stat-value" id="stat-total">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Оценено</span>
+        <span class="stat-value green" id="stat-evaluated">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Грубых ошибок</span>
+        <span class="stat-value" id="stat-gross" style="color:var(--danger)">—</span>
+      </div>
+    </div>
+
+    <div class="sidebar-role">
+      <span class="role-label">Роль</span>
+      <div class="role-toggle">
+        <button class="role-btn active" data-role="operator">Оператор</button>
+        <button class="role-btn" data-role="reviewer">Проверяющий</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-title" id="topbar-title">Диалоги</div>
+      <div class="topbar-actions" id="topbar-actions">
+        <button class="btn btn-ghost btn-sm" id="btn-add-conv" title="Добавить диалог вручную">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
+          Добавить
+        </button>
+        <button class="btn btn-ghost btn-sm" id="btn-import" title="Загрузить диалоги из API">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3 6l3.5 3.5L10 6M2 11h9" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
+          Импорт
+        </button>
+        <button class="btn btn-primary btn-sm" id="btn-batch">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M4 6.5l1.8 1.8L9 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="square"/></svg>
+          Оценить все
+        </button>
+      </div>
+    </header>
+
+    <!-- Batch progress bar -->
+    <div id="batch-progress-wrap" class="hidden" style="padding:0 20px 10px;padding-top:10px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-3);margin-bottom:5px">
+        <span id="batch-progress-label">Оценка…</span>
+        <span id="batch-progress-pct"></span>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="batch-progress-bar" style="width:0%"></div></div>
+    </div>
+
+    <!-- Views -->
+    <section class="view active" id="view-conversations">
+      <div class="conversations-layout">
+        <!-- List panel -->
+        <div class="conv-list-panel" id="conv-list-panel">
+          <div class="filter-bar">
+            <input type="search" class="filter-input" id="filter-q" placeholder="Поиск по ID…" aria-label="Поиск по ID диалога">
+            <div style="display:flex;gap:5px">
+              <select class="filter-select" id="filter-lang" style="flex:1" aria-label="Фильтр по языку">
+                <option value="">Все языки</option>
+                <option value="RU">RU</option>
+                <option value="KZ">KZ</option>
+                <option value="EN">EN</option>
+              </select>
+              <select class="filter-select" id="filter-channel" style="flex:1" aria-label="Фильтр по каналу">
+                <option value="">Все каналы</option>
+                <option value="agent chat">Чат</option>
+                <option value="voice call">Звонок</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:5px">
+              <select class="filter-select" id="filter-status" style="flex:1" aria-label="Фильтр по статусу оценки">
+                <option value="">Все статусы</option>
+                <option value="evaluated">Оценены</option>
+                <option value="pending">Не оценены</option>
+              </select>
+              <select class="filter-select" id="filter-sort" style="flex:1" aria-label="Сортировка">
+                <option value="default">По умолчанию</option>
+                <option value="gross_first">Грубые ↑</option>
+                <option value="score_desc">Оценка ↓</option>
+                <option value="score_asc">Оценка ↑</option>
+              </select>
+            </div>
+            <label class="filter-gross">
+              <input type="checkbox" id="filter-gross"> Только грубые ошибки
+            </label>
+          </div>
+          <div class="conv-list" id="conv-list">
+            <div class="list-loading">Загрузка…</div>
+          </div>
+        </div>
+
+        <!-- Card panel -->
+        <div class="conv-card-panel" id="conv-card-panel">
+          <div class="empty-state" id="empty-state">
+            <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+              <rect x="6" y="6" width="32" height="32" stroke="var(--border)" stroke-width="1.5"/>
+              <path d="M14 18h16M14 24h10M14 30h13" stroke="var(--border)" stroke-width="1.5" stroke-linecap="square"/>
+            </svg>
+            <p>Выберите диалог из списка</p>
+          </div>
+          <div class="conv-card hidden" id="conv-card">
+            <!-- filled by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view hidden" id="view-checklists">
+      <div class="checklist-editor" id="checklist-editor">
+        <div class="list-loading">Загрузка чек-листов…</div>
+      </div>
+    </section>
+
+    <section class="view hidden" id="view-appeals">
+      <div class="appeals-view" id="appeals-view">
+        <div class="list-loading">Загрузка апелляций…</div>
+      </div>
+    </section>
+
+    <section class="view hidden" id="view-analytics">
+      <div class="analytics-view" id="analytics-view">
+        <div class="list-loading">Загрузка аналитики…</div>
+      </div>
+    </section>
   </main>
+</div>
 
-  <script src="/app.js"></script>
+<!-- Add conversation modal -->
+<div id="add-conv-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-label="Добавить диалог">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Добавить диалог</span>
+      <button class="modal-close" id="modal-close" aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-row">
+        <label class="modal-label">ID диалога</label>
+        <input type="text" id="new-conv-id" class="modal-input" placeholder="Авто (оставьте пустым)">
+      </div>
+      <div class="modal-row" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <label class="modal-label">Канал</label>
+          <select id="new-conv-channel" class="modal-input">
+            <option value="agent chat">Чат</option>
+            <option value="voice call">Звонок</option>
+          </select>
+        </div>
+        <div>
+          <label class="modal-label">Язык</label>
+          <select id="new-conv-lang" class="modal-input">
+            <option value="RU">RU</option>
+            <option value="KZ">KZ</option>
+            <option value="EN">EN</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <label class="modal-label" style="margin:0">Транскрипт</label>
+          <button class="btn btn-ghost btn-sm" id="btn-add-msg" type="button">+ Реплика</button>
+        </div>
+        <div id="transcript-rows"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span id="modal-error" style="font-size:12px;color:var(--danger)"></span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" id="btn-modal-cancel">Отмена</button>
+        <button class="btn btn-primary" id="btn-modal-save">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="components/conversations.js"></script>
+<script src="components/card.js"></script>
+<script src="components/checklists.js"></script>
+<script src="components/appeals.js"></script>
+<script src="components/analytics.js"></script>
 </body>
 </html>

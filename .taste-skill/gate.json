@@ -1,0 +1,935 @@
+{
+ "start": "2026-11-08T01:06:47.501Z",
+ "round": 3,
+ "idle": 0,
+ "errors": 0,
+ "status": "open",
+ "history": [
+  {
+   "at": "2026-11-08T03:57:11.124Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:03:59.254Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:06:47.300Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:08:28.863Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:14:41.930Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:16:01.842Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:17:15.702Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:19:12.228Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:19:52.391Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:22:06.786Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:24:17.897Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:29:55.752Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:31:15.573Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:33:26.927Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:36:44.208Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:37:20.296Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:40:35.955Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:41:29.694Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:41:44.613Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  },
+  {
+   "at": "2026-11-08T04:45:12.510Z",
+   "mode": "hook",
+   "host": "claude",
+   "decision": "allow",
+   "reason": "no build is active here",
+   "stopHookActive": false
+  }
+ ],
+ "max": 3,
+ "marker": {
+  "page": null,
+  "dir": "/Users/sunflower/programming/freedom broker x data sci 26'/freedom",
+  "kind": "software",
+  "start": "2026-11-08T01:06:47.501Z",
+  "by": "start.mjs"
+ },
+ "roundKey": "7f6598eb7146e3b4:779926a5",
+ "roundFree": false,
+ "idleFree": false,
+ "blockKey": null,
+ "fp": "7f6598eb7146e3b4",
+ "page": "frontend/index.html",
+ "found": {
+  "fails": [
+   {
+    "check": "no-visual",
+    "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+    "msg": "no picture, effect or mock in this section; a feature section needs a visual",
+    "fix": "give the section a visual: a UI fragment on a ground, real icons, or a photograph that fits",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency",
+    "ids": [
+     "no-visual"
+    ],
+    "wheres": [
+     "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+    ]
+   },
+   {
+    "check": "cta",
+    "where": "section#view-conversations",
+    "msg": "the hero has no button (the nav's does not count)",
+    "fix": "add the action: a button in the hero, one on every priced item, one in the closing section",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency",
+    "ids": [
+     "cta"
+    ],
+    "wheres": [
+     "section#view-conversations"
+    ]
+   },
+   {
+    "check": "copy-headline",
+    "where": "(the page)",
+    "msg": "the page has no visible h1",
+    "fix": "put the category noun in the h1 (and who it is for, or where), in 2 to 8 words",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "copy-headline"
+    ],
+    "wheres": [
+     "(the page)"
+    ]
+   },
+   {
+    "check": "copy-fact",
+    "where": "(the page)",
+    "msg": "the first screen holds no number, price, date, place, platform or genre",
+    "fix": "put one hard fact from the brief on the first screen: a number, a price, a date, the place, the platforms it runs on or a game's genre; take it from the brief or remove the claim",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "copy-fact"
+    ],
+    "wheres": [
+     "(the page)"
+    ]
+   },
+   {
+    "check": "empty-area",
+    "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+    "msg": "61% of the section is empty: 61% beside content that covers under half the container, in its 848px of rows (WARN over 35%, FAIL over 50%)",
+    "fix": "fill the section: a picture or a second column beside the words, or more of its own content; the section stays one or two screens tall (T-height)",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "empty-area"
+    ],
+    "wheres": [
+     "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+    ]
+   },
+   {
+    "check": "field-label",
+    "where": "input#filter-q",
+    "msg": "a input[type=search] without a label you can see: only a placeholder (\"Поиск по ID…\") names it",
+    "fix": "put a <label for> with the field's name above it (references/system.md, Forms); a placeholder is no label",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "field-label"
+    ],
+    "wheres": [
+     "input#filter-q"
+    ]
+   },
+   {
+    "check": "field-label",
+    "where": "select#filter-lang",
+    "msg": "a select[type=select-one] without a label you can see: only an aria-label names it",
+    "fix": "put a <label for> with the field's name above it (references/system.md, Forms); a placeholder is no label",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "field-label"
+    ],
+    "wheres": [
+     "select#filter-lang"
+    ]
+   },
+   {
+    "check": "field-label",
+    "where": "select#filter-channel",
+    "msg": "a select[type=select-one] without a label you can see: only an aria-label names it",
+    "fix": "put a <label for> with the field's name above it (references/system.md, Forms); a placeholder is no label",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "field-label"
+    ],
+    "wheres": [
+     "select#filter-channel"
+    ]
+   },
+   {
+    "check": "field-label",
+    "where": "select#filter-status",
+    "msg": "a select[type=select-one] without a label you can see: only an aria-label names it",
+    "fix": "put a <label for> with the field's name above it (references/system.md, Forms); a placeholder is no label",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "field-label"
+    ],
+    "wheres": [
+     "select#filter-status"
+    ]
+   },
+   {
+    "check": "moment-none",
+    "where": "(the page)",
+    "msg": "a software page (--type) deals no moment: every kind carries one, two on a long page (moments.md)",
+    "fix": "deal one (moments.mjs pick --page software) and mount it in its own section",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "moment-none"
+    ],
+    "wheres": [
+     "(the page)"
+    ]
+   },
+   {
+    "check": "hero-screen",
+    "where": "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\"",
+    "msg": "the hero ends at 52px on a 900px screen, 848px above the fold: it ends at the fold, 1px either way (SR-1)",
+    "fix": "make the hero exactly one screen (height: 100svh, its content fitted inside), never taller or shorter",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "hero-screen"
+    ],
+    "wheres": [
+     "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\""
+    ]
+   },
+   {
+    "check": "hero-screen",
+    "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+    "msg": "848px of the next section shows on the first screen (from 52px on a 900px screen): nothing below the hero shows at load (SR-1)",
+    "fix": "end the hero at the fold so nothing of the next section shows at load (hero height: 100svh)",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "hero-screen"
+    ],
+    "wheres": [
+     "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+    ]
+   },
+   {
+    "check": "section-height",
+    "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+    "msg": "the section is 848px tall (0.9 screens), 52px short of one screen (900px): every section after the hero is one screen or two, 2px either way (SR-2)",
+    "fix": "set the section to one screen or two (height: calc(var(--h,1) * 100vh), --h 1 or 2) and cut or split its content to fit",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "section-height"
+    ],
+    "wheres": [
+     "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+    ]
+   },
+   {
+    "check": "one-section",
+    "where": "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\"",
+    "msg": "a <header> sits directly in <main>: every part of <main> is a <section> (SR-4)",
+    "fix": "put every block of <main> in a <section>, and give a band its own section instead of a ground inside one",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "one-section"
+    ],
+    "wheres": [
+     "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\""
+    ]
+   },
+   {
+    "check": "container-edges",
+    "where": "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\"",
+    "msg": "the content of section 1 runs 248px from the left and 20px from the right (read from its outermost blocks: no .wrap): the page's container starts at 228px; 248 and 20px are not one margin; the margin is 64-120px at 1440px (one container, equal margins, 2px either way) (SR-6)",
+    "fix": "use one container on every section and the nav (.wrap): one margin left and right, 64-120px on a desktop, 16-24px on a phone",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "container-edges"
+    ],
+    "wheres": [
+     "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\""
+    ]
+   },
+   {
+    "check": "container-edges",
+    "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+    "msg": "the content of section 2 runs 228px from the left and 0px from the right (read from its outermost blocks: no .wrap): 228 and 0px are not one margin; the margin is 64-120px at 1440px (one container, equal margins, 2px either way) (SR-6)",
+    "fix": "use one container on every section and the nav (.wrap): one margin left and right, 64-120px on a desktop, 16-24px on a phone",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "container-edges"
+    ],
+    "wheres": [
+     "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+    ]
+   },
+   {
+    "check": "container-edges",
+    "where": "div.app \"CQA Freedom Broker Диалоги — Чек-листы А\"",
+    "msg": "a <div> at the top of the page, outside header.nav, main, footer.closing and nav.actionbar (SR-6)",
+    "fix": "build the page as header.nav, a main of sections (each one in-flow .wrap plus background layers) and footer.closing",
+    "widths": [
+     1440
+    ],
+    "from": "consistency",
+    "ids": [
+     "container-edges"
+    ],
+    "wheres": [
+     "div.app \"CQA Freedom Broker Диалоги — Чек-листы А\""
+    ]
+   },
+   {
+    "check": "container",
+    "where": "page",
+    "msg": "no .wrap",
+    "fix": "put the content in one .wrap",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "layout",
+    "ids": [
+     "container"
+    ],
+    "wheres": [
+     "page"
+    ]
+   }
+  ],
+  "warns": [
+   {
+    "check": "assets",
+    "where": "(the page)",
+    "msg": "the data file api/conversations did not load (404)",
+    "fix": "fix the path, or remove the reference",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "heading-scale",
+    "where": "(the page)",
+    "msg": "the page has no visible h1",
+    "fix": "size headings by level: the h1 largest, one size per level, each level below the one above",
+    "widths": [
+     1440,
+     390
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "nav-family",
+    "where": "div.app > aside.sidebar",
+    "msg": "the nav's links come in 2 sizes (13, 11px)",
+    "fix": "keep one nav on every screen: the same bar, fill, links and type",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "button-contrast",
+    "where": "aside.sidebar > div.sidebar-role > div.role-toggle > button.role-btn.active \"Оператор\"",
+    "msg": "the button \"Оператор\" (#2e2a27) stands only 1.28:1 off the ground around it: it reads as part of the ground, or as switched off",
+    "fix": "give the button a fill that stands at least 1.5:1 off what is around it, or an outline in the ink",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "skip-link",
+    "where": "div.app > aside.sidebar > nav.sidebar-nav > button.nav-item.active:nth-of-type(1) \"Диалоги —\"",
+    "msg": "the first Tab stop is \"Диалоги —\", not a skip link: a keyboard user tabs through the whole nav on every visit",
+    "fix": "add the starter's skip link as the header's first child: <a class=\"skip-link\" href=\"#top\">Skip to content</a>",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "page-meta",
+    "where": "head \"CQA — Freedom Broker\"",
+    "msg": "no <meta name=\"description\">: a search result and a shared link show a scrap of the page instead",
+    "fix": "write a <title> \"Name: what it is for whom or where\" and a one-sentence description in other words (starter.html)",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "share-meta",
+    "where": "head",
+    "msg": "the head lacks og:title, og:description, og:image, twitter:card, an icon, theme-color: a shared link shows no picture or title of its own",
+    "fix": "copy the head block of starter.html: og tags, twitter:card, the icon and theme-color (references/system.md, Head)",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "one-section",
+    "where": "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\"",
+    "msg": "the screen at scroll 0px (stride 0) shows 52px of section 1 beside section 2: a screen shows one section (another may peek 8px, 24px WARN) (it sits in a part held on screen as the page scrolls: told as a WARN) (SR-4)",
+    "fix": "make each section exactly one screen or two, so a screen shows one section and no neighbour peeks",
+    "widths": [
+     1440
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "tap-size",
+    "where": "button#btn-import \"Импорт\"",
+    "msg": "a 84x24px tap target: under the 44px a phone needs",
+    "fix": "make every link and control outside running text 44px tall on a phone: display: inline-flex; align-items: center; min-height: 44px (a footer list then needs no gap), a 44px small button, or a transparent ::before laid past the box",
+    "widths": [
+     390,
+     320
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "tap-size",
+    "where": "button#btn-batch \"Оценить все\"",
+    "msg": "a 109x22px tap target: under the 44px a phone needs",
+    "fix": "make every link and control outside running text 44px tall on a phone: display: inline-flex; align-items: center; min-height: 44px (a footer list then needs no gap), a 44px small button, or a transparent ::before laid past the box",
+    "widths": [
+     390,
+     320
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "tap-size",
+    "where": "input#filter-q",
+    "msg": "a 370x36px tap target: under the 44px a phone needs",
+    "fix": "make every link and control outside running text 44px tall on a phone: display: inline-flex; align-items: center; min-height: 44px (a footer list then needs no gap), a 44px small button, or a transparent ::before laid past the box",
+    "widths": [
+     390,
+     320
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "tap-size",
+    "where": "select#filter-lang \"Все языки RU KZ EN\"",
+    "msg": "a 183x36px tap target (and 1 more like it on this screen): under the 44px a phone needs",
+    "fix": "make every link and control outside running text 44px tall on a phone: display: inline-flex; align-items: center; min-height: 44px (a footer list then needs no gap), a 44px small button, or a transparent ::before laid past the box",
+    "widths": [
+     390,
+     320
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "tap-size",
+    "where": "select#filter-status \"Все статусы Оценены Не оценены\"",
+    "msg": "a 370x36px tap target: under the 44px a phone needs",
+    "fix": "make every link and control outside running text 44px tall on a phone: display: inline-flex; align-items: center; min-height: 44px (a footer list then needs no gap), a 44px small button, or a transparent ::before laid past the box",
+    "widths": [
+     390,
+     320
+    ],
+    "from": "consistency"
+   },
+   {
+    "check": "tap-size",
+    "where": "input#filter-gross",
+    "msg": "a 370x36px tap target: under the 44px a phone needs",
+    "fix": "make every link and control outside running text 44px tall on a phone: display: inline-flex; align-items: center; min-height: 44px (a footer list then needs no gap), a 44px small button, or a transparent ::before laid past the box",
+    "widths": [
+     390,
+     320
+    ],
+    "from": "consistency"
+   }
+  ],
+  "crashed": [],
+  "seconds": {
+   "consistency": 49,
+   "layout": 13
+  }
+ },
+ "open": [
+  {
+   "check": "no-visual",
+   "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+   "msg": "no picture, effect or mock in this section; a feature section needs a visual",
+   "fix": "give the section a visual: a UI fragment on a ground, real icons, or a photograph that fits",
+   "widths": [
+    1440,
+    390
+   ],
+   "from": "consistency",
+   "ids": [
+    "no-visual"
+   ],
+   "wheres": [
+    "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+   ]
+  },
+  {
+   "check": "cta",
+   "where": "section#view-conversations",
+   "msg": "the hero has no button (the nav's does not count)",
+   "fix": "add the action: a button in the hero, one on every priced item, one in the closing section",
+   "widths": [
+    1440,
+    390
+   ],
+   "from": "consistency",
+   "ids": [
+    "cta"
+   ],
+   "wheres": [
+    "section#view-conversations"
+   ]
+  },
+  {
+   "check": "empty-area",
+   "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+   "msg": "61% of the section is empty: 61% beside content that covers under half the container, in its 848px of rows (WARN over 35%, FAIL over 50%)",
+   "fix": "fill the section: a picture or a second column beside the words, or more of its own content; the section stays one or two screens tall (T-height)",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "empty-area"
+   ],
+   "wheres": [
+    "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+   ]
+  },
+  {
+   "check": "field-label",
+   "where": "input#filter-q",
+   "msg": "a input[type=search] without a label you can see: only a placeholder (\"Поиск по ID…\") names it",
+   "fix": "put a <label for> with the field's name above it (references/system.md, Forms); a placeholder is no label",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "field-label"
+   ],
+   "wheres": [
+    "input#filter-q"
+   ]
+  },
+  {
+   "check": "field-label",
+   "where": "select#filter-lang",
+   "msg": "a select[type=select-one] without a label you can see: only an aria-label names it",
+   "fix": "put a <label for> with the field's name above it (references/system.md, Forms); a placeholder is no label",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "field-label"
+   ],
+   "wheres": [
+    "select#filter-lang"
+   ]
+  },
+  {
+   "check": "field-label",
+   "where": "select#filter-channel",
+   "msg": "a select[type=select-one] without a label you can see: only an aria-label names it",
+   "fix": "put a <label for> with the field's name above it (references/system.md, Forms); a placeholder is no label",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "field-label"
+   ],
+   "wheres": [
+    "select#filter-channel"
+   ]
+  },
+  {
+   "check": "field-label",
+   "where": "select#filter-status",
+   "msg": "a select[type=select-one] without a label you can see: only an aria-label names it",
+   "fix": "put a <label for> with the field's name above it (references/system.md, Forms); a placeholder is no label",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "field-label"
+   ],
+   "wheres": [
+    "select#filter-status"
+   ]
+  },
+  {
+   "check": "hero-screen",
+   "where": "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\"",
+   "msg": "the hero ends at 52px on a 900px screen, 848px above the fold: it ends at the fold, 1px either way (SR-1)",
+   "fix": "make the hero exactly one screen (height: 100svh, its content fitted inside), never taller or shorter",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "hero-screen"
+   ],
+   "wheres": [
+    "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\""
+   ]
+  },
+  {
+   "check": "hero-screen",
+   "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+   "msg": "848px of the next section shows on the first screen (from 52px on a 900px screen): nothing below the hero shows at load (SR-1)",
+   "fix": "end the hero at the fold so nothing of the next section shows at load (hero height: 100svh)",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "hero-screen"
+   ],
+   "wheres": [
+    "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+   ]
+  },
+  {
+   "check": "section-height",
+   "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+   "msg": "the section is 848px tall (0.9 screens), 52px short of one screen (900px): every section after the hero is one screen or two, 2px either way (SR-2)",
+   "fix": "set the section to one screen or two (height: calc(var(--h,1) * 100vh), --h 1 or 2) and cut or split its content to fit",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "section-height"
+   ],
+   "wheres": [
+    "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+   ]
+  },
+  {
+   "check": "one-section",
+   "where": "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\"",
+   "msg": "a <header> sits directly in <main>: every part of <main> is a <section> (SR-4)",
+   "fix": "put every block of <main> in a <section>, and give a band its own section instead of a ground inside one",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "one-section"
+   ],
+   "wheres": [
+    "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\""
+   ]
+  },
+  {
+   "check": "container-edges",
+   "where": "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\"",
+   "msg": "the content of section 1 runs 248px from the left and 20px from the right (read from its outermost blocks: no .wrap): the page's container starts at 228px; 248 and 20px are not one margin; the margin is 64-120px at 1440px (one container, equal margins, 2px either way) (SR-6)",
+   "fix": "use one container on every section and the nav (.wrap): one margin left and right, 64-120px on a desktop, 16-24px on a phone",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "container-edges"
+   ],
+   "wheres": [
+    "div.app > main.main > header.topbar \"Диалоги Импорт Оценить все\""
+   ]
+  },
+  {
+   "check": "container-edges",
+   "where": "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\"",
+   "msg": "the content of section 2 runs 228px from the left and 0px from the right (read from its outermost blocks: no .wrap): 228 and 0px are not one margin; the margin is 64-120px at 1440px (one container, equal margins, 2px either way) (SR-6)",
+   "fix": "use one container on every section and the nav (.wrap): one margin left and right, 64-120px on a desktop, 16-24px on a phone",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "container-edges"
+   ],
+   "wheres": [
+    "section#view-conversations \"Все языки RU KZ EN Все каналы Чат Звонок\""
+   ]
+  },
+  {
+   "check": "container-edges",
+   "where": "div.app \"CQA Freedom Broker Диалоги — Чек-листы А\"",
+   "msg": "a <div> at the top of the page, outside header.nav, main, footer.closing and nav.actionbar (SR-6)",
+   "fix": "build the page as header.nav, a main of sections (each one in-flow .wrap plus background layers) and footer.closing",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "container-edges"
+   ],
+   "wheres": [
+    "div.app \"CQA Freedom Broker Диалоги — Чек-листы А\""
+   ]
+  },
+  {
+   "check": "container",
+   "where": "page",
+   "msg": "no .wrap",
+   "fix": "put the content in one .wrap",
+   "widths": [
+    1440,
+    390
+   ],
+   "from": "layout",
+   "ids": [
+    "container"
+   ],
+   "wheres": [
+    "page"
+   ]
+  }
+ ],
+ "waived": [
+  {
+   "check": "copy-headline",
+   "where": "(the page)",
+   "msg": "the page has no visible h1",
+   "fix": "put the category noun in the h1 (and who it is for, or where), in 2 to 8 words",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "copy-headline"
+   ],
+   "wheres": [
+    "(the page)"
+   ],
+   "reason": "Internal SaaS tool with persistent navigation — no marketing h1 hero needed; the app title is in the sidebar logo and topbar"
+  },
+  {
+   "check": "copy-fact",
+   "where": "(the page)",
+   "msg": "the first screen holds no number, price, date, place, platform or genre",
+   "fix": "put one hard fact from the brief on the first screen: a number, a price, a date, the place, the platforms it runs on or a game's genre; take it from the brief or remove the claim",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "copy-fact"
+   ],
+   "wheres": [
+    "(the page)"
+   ],
+   "reason": "Internal analytics tool — no marketing facts needed on first screen; data is loaded dynamically from API"
+  },
+  {
+   "check": "moment-none",
+   "where": "(the page)",
+   "msg": "a software page (--type) deals no moment: every kind carries one, two on a long page (moments.md)",
+   "fix": "deal one (moments.mjs pick --page software) and mount it in its own section",
+   "widths": [
+    1440
+   ],
+   "from": "consistency",
+   "ids": [
+    "moment-none"
+   ],
+   "wheres": [
+    "(the page)"
+   ],
+   "reason": "Internal tool SPA — designed editorial moments are for landing pages; score odometer animation serves as the motion moment"
+  }
+ ],
+ "warnCount": 14,
+ "at": "2026-11-08T01:23:03.878Z",
+ "session": "045df71d-7e43-43b6-a91d-b4f978eaf6eb",
+ "manual": true,
+ "openTold": true
+}
