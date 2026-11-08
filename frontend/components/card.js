@@ -387,4 +387,17 @@
   }
 
   window.openConversation = openConversation;
+
+  // Re-fetch evaluation for current open card (called after appeal decision)
+  window.refreshCurrentCard = async function () {
+    if (!currentConvId) return;
+    try {
+      const ev = await window.appApi(`/api/conversations/${currentConvId}`);
+      if (ev.eval_id) {
+        const result = await window.appApi(`/api/evaluations/${ev.eval_id}`);
+        renderEvaluation(result);
+      }
+      window.refreshConversations?.();
+    } catch {}
+  };
 })();

@@ -63,7 +63,13 @@
               style="width:100%;background:var(--bg-2);border:1px solid var(--border);
                      border-radius:var(--r);color:var(--ink);padding:7px 10px;
                      font-size:12px;resize:vertical;min-height:52px;font-family:inherit"></textarea>
-            <div style="display:flex;gap:8px">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <select id="new-answer-${a.id}" style="background:var(--bg-2);border:1px solid var(--border);color:var(--ink);padding:5px 8px;font-size:12px;font-family:inherit;border-radius:var(--r-sm)">
+                <option value="">— Новый ответ (при одобрении) —</option>
+                <option value="yes">Да</option>
+                <option value="no">Нет</option>
+                <option value="na">N/A</option>
+              </select>
               <button class="btn btn-primary" data-appeal="${a.id}" data-action="approve">Одобрить</button>
               <button class="btn btn-ghost" data-appeal="${a.id}" data-action="reject">Отклонить</button>
             </div>
@@ -103,21 +109,34 @@
 
   function bindDecisionButtons() {
     const c = container();
-    // Decision buttons
     c.querySelectorAll('[data-action]').forEach(btn => {
       btn.addEventListener('click', async () => {
         const appealId = parseInt(btn.dataset.appeal);
-        const action = btn.dataset.action;
-        const reason = document.getElementById('reason-' + appealId)?.value || '';
+        const action    = btn.dataset.action;
+        const reason    = document.getElementById('reason-' + appealId)?.value || '';
+        const newAnswer = document.getElementById('new-answer-' + appealId)?.value || null;
+
+        if (action === 'approve' && !newAnswer) {
+          window.showToast?.('Выберите новый ответ для одобрения', 'error');
+          return;
+        }
+
         btn.disabled = true;
         try {
+          const payload = { action, reason };
+          if (action === 'approve' && newAnswer) payload.new_answer = newAnswer;
+
           await window.appApi(`/api/appeals/${appealId}/decision`, {
             method: 'POST',
-            body: JSON.stringify({ action, reason }),
+            body: JSON.stringify(payload),
           });
+
+          // Refresh card if that conversation is open
+          window.refreshCurrentCard?.();
+          window.refreshStats?.();
           await loadAppeals();
         } catch (e) {
-          alert('Ошибка: ' + e.message);
+          window.showToast?.('Ошибка: ' + e.message, 'error');
           btn.disabled = false;
         }
       });
