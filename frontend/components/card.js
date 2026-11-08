@@ -3,6 +3,8 @@
 
   let currentConvId = null;
 
+  const showToast = (msg, type) => window.showToast?.(msg, type);
+
   // ── Helpers ───────────────────────────────────────────
   function scoreClass(n) {
     if (n === null || n === undefined) return 'none';
@@ -189,8 +191,9 @@
 
     const isGross = c.criterion_id === 'c08' && c.answer === 'yes';
     const isNo    = c.answer === 'no' && c.criterion_id !== 'c08';
+    const uid     = `appeal-${evalId}-${c.criterion_id}`;
 
-    return `<div class="criterion-card${isGross ? ' has-gross' : ''}${isNo ? ' has-no' : ''}">
+    return `<div class="criterion-card${isGross ? ' has-gross' : ''}${isNo ? ' has-no' : ''}" id="card-${uid}">
       <div class="criterion-header">
         <span class="criterion-id">${c.criterion_id}</span>
         <span class="criterion-title">${getCriterionTitle(c.criterion_id)}</span>
@@ -199,9 +202,17 @@
       ${scoreHtml}
       <div class="criterion-explanation">${escHtml(c.explanation || '')}</div>
       ${evidenceHtml}
-      <button class="appeal-btn" data-eval="${evalId}" data-crit="${c.criterion_id}">
+      <button class="appeal-btn" data-eval="${evalId}" data-crit="${c.criterion_id}" data-uid="${uid}">
         Оспорить
       </button>
+      <div class="appeal-panel hidden" id="panel-${uid}">
+        <textarea class="appeal-panel-input" id="text-${uid}" placeholder="Опишите причину апелляции…" rows="3"></textarea>
+        <div class="appeal-panel-actions">
+          <span class="appeal-panel-err" id="err-${uid}"></span>
+          <button class="btn btn-ghost btn-sm" data-cancel="${uid}">Отмена</button>
+          <button class="btn btn-danger btn-sm" data-submit="${uid}" data-eval="${evalId}" data-crit="${c.criterion_id}">Отправить</button>
+        </div>
+      </div>
     </div>`;
   }
 
@@ -236,25 +247,65 @@
       el.addEventListener('click', () => highlightMsg(parseInt(el.dataset.idx)))
     );
 
-    // Appeal buttons
+    // Appeal buttons — open inline panel
     resultsBody.querySelectorAll('.appeal-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const uid = btn.dataset.uid;
+        const panel = document.getElementById('panel-' + uid);
+        if (!panel) return;
+        btn.classList.add('hidden');
+        panel.classList.remove('hidden');
+        panel.querySelector('textarea')?.focus();
+      });
+    });
+
+    // Cancel appeal
+    resultsBody.querySelectorAll('[data-cancel]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const uid = btn.dataset.cancel;
+        document.getElementById('panel-' + uid)?.classList.add('hidden');
+        document.querySelector(`.appeal-btn[data-uid="${uid}"]`)?.classList.remove('hidden');
+        document.getElementById('err-' + uid && 'err-' + uid).textContent = '';
+      });
+    });
+
+    // Submit appeal
+    resultsBody.querySelectorAll('[data-submit]').forEach(btn => {
       btn.addEventListener('click', async () => {
-        const comment = prompt(`Апелляция по критерию ${btn.dataset.crit}.\nОпишите причину:`);
-        if (!comment) return;
+        const uid    = btn.dataset.submit;
+        const evalId = parseInt(btn.dataset.eval);
+        const critId = btn.dataset.crit;
+        const errEl  = document.getElementById('err-' + uid);
+        const textarea = document.getElementById('text-' + uid);
+        const comment  = textarea?.value.trim();
+
+        if (!comment) {
+          if (errEl) errEl.textContent = 'Введите причину';
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Отправка…';
+        if (errEl) errEl.textContent = '';
+
         try {
           await window.appApi('/api/appeals', {
             method: 'POST',
-            body: JSON.stringify({
-              evaluation_id: parseInt(btn.dataset.eval),
-              criterion_id: btn.dataset.crit,
-              comment,
-            }),
+            body: JSON.stringify({ evaluation_id: evalId, criterion_id: critId, comment }),
           });
-          btn.textContent = 'Отправлено';
-          btn.disabled = true;
-          btn.style.color = 'var(--brand-light)';
+          const panel   = document.getElementById('panel-' + uid);
+          const appealBtn = document.querySelector(`.appeal-btn[data-uid="${uid}"]`);
+          if (panel) panel.classList.add('hidden');
+          if (appealBtn) {
+            appealBtn.classList.remove('hidden');
+            appealBtn.textContent = '✓ Отправлено';
+            appealBtn.disabled = true;
+            appealBtn.style.cssText = 'color:var(--brand-light);border-color:rgba(36,168,98,.3);background:rgba(36,168,98,.07)';
+          }
         } catch (e) {
-          alert('Ошибка: ' + e.message);
+          if (errEl) errEl.textContent = e.message;
+          btn.disabled = false;
+          btn.textContent = 'Отправить';
         }
       });
     });
@@ -273,7 +324,7 @@
       window.refreshConversations?.();
       window.refreshStats?.();
     } catch (e) {
-      alert('Ошибка оценки: ' + e.message);
+      showToast('Ошибка оценки: ' + e.message, 'error');
     } finally {
       if (btn) { btn.disabled = false; btn.innerHTML = 'Оценить диалог'; }
     }

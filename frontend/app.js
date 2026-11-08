@@ -225,6 +225,20 @@ async function saveNewConversation() {
   }
 }
 
+// ── Toast notifications ───────────────────────────────────
+function showToast(msg, type = 'info') {
+  const t = document.createElement('div');
+  t.className = `cqa-toast cqa-toast-${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('cqa-toast-in'));
+  setTimeout(() => {
+    t.classList.remove('cqa-toast-in');
+    t.addEventListener('transitionend', () => t.remove(), { once: true });
+  }, 3500);
+}
+window.showToast = showToast;
+
 // ── Score odometer animation ──────────────────────────────
 function animateScore(el, value) {
   if (!el || value === null || value === undefined) return;

@@ -230,17 +230,16 @@
       ));
       // Reload checklists to get updated active_version_id
       await loadChecklists();
-      alert('Новая версия сохранена');
+      window.showToast?.('Новая версия чек-листа сохранена', 'success');
     } catch (e) {
-      alert('Ошибка: ' + e.message);
+      window.showToast?.('Ошибка: ' + e.message, 'error');
     } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Сохранить как новую версию'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Сохранить версию'; }
     }
   }
 
   // ── Re-evaluate all conversations ─────────────────────────
   async function reevaluateAll() {
-    if (!confirm('Запустить переоценку всех диалогов с текущей версией чек-листа?')) return;
     const btn = document.getElementById('btn-reevaluate');
     if (btn) { btn.disabled = true; btn.textContent = 'Запуск…'; }
 
@@ -261,9 +260,9 @@
         } catch {}
       }
       window.refreshConversations?.();
-      alert(`Переоценка завершена: ${done}/${convs.length} диалогов`);
+      window.showToast?.(`Переоценка завершена: ${done}/${convs.length} диалогов`, 'success');
     } catch (e) {
-      alert('Ошибка: ' + e.message);
+      window.showToast?.('Ошибка: ' + e.message, 'error');
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Переоценить все'; }
     }

@@ -1260,6 +1260,55 @@ body {
   .conv-card { grid-template-columns: 1fr 300px; }
 }
 
+/* ── Inline appeal panel ────────────────────────────────── */
+.appeal-panel {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: rgba(224,82,82,.05);
+  border: 1px solid rgba(224,82,82,.2);
+  border-radius: var(--r-sm);
+}
+.appeal-panel-input {
+  width: 100%; box-sizing: border-box;
+  background: var(--bg-2); border: 1px solid var(--border);
+  border-radius: var(--r-sm); color: var(--ink);
+  padding: 7px 10px; font-size: 12px; font-family: inherit;
+  resize: vertical; min-height: 60px; outline: none;
+  transition: border-color .15s;
+}
+.appeal-panel-input:focus { border-color: rgba(224,82,82,.5); }
+.appeal-panel-actions {
+  display: flex; align-items: center; gap: 7px;
+  margin-top: 7px;
+}
+.appeal-panel-err {
+  flex: 1; font-size: 11px; color: var(--danger);
+}
+.btn-danger {
+  background: rgba(224,82,82,.15);
+  color: #e05252;
+  border: 1px solid rgba(224,82,82,.35);
+}
+.btn-danger:hover {
+  background: rgba(224,82,82,.25);
+  border-color: rgba(224,82,82,.55);
+}
+
+/* ── Toast ──────────────────────────────────────────────── */
+.cqa-toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 2000;
+  padding: 11px 16px; border-radius: var(--r);
+  font-size: 12px; font-family: var(--font);
+  background: var(--bg-3); color: var(--ink);
+  border: 1px solid var(--border-light);
+  opacity: 0; transform: translateY(8px);
+  transition: opacity .2s, transform .2s;
+  max-width: 320px; pointer-events: none;
+}
+.cqa-toast-in { opacity: 1; transform: translateY(0); }
+.cqa-toast-error { background: rgba(224,82,82,.15); border-color: rgba(224,82,82,.35); color: #e05252; }
+.cqa-toast-success { background: rgba(26,122,74,.15); border-color: rgba(26,122,74,.35); color: var(--brand-light); }
+
 /* ── Modal ──────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 1000;
