@@ -1,8 +1,8 @@
 """Whisper-based audio analysis for voice call evaluation."""
-import json
 import os
+import sys
+import types
 import tempfile
-from typing import Optional
 
 import httpx
 
@@ -10,9 +10,52 @@ WHISPER_MODEL_SIZE = os.getenv("WHISPER_MODEL_SIZE", "tiny")
 _model = None
 
 
+def _patch_av_if_missing():
+    """
+    faster_whisper/audio.py does `import av` at module level.
+    If av is not installed, we inject a minimal stub so the module loads,
+    then override decode_audio with an ffmpeg-subprocess implementation.
+    """
+    try:
+        import av  # noqa: F401
+        return  # already installed — nothing to do
+    except ImportError:
+        pass
+
+    # Minimal av stub — just enough to satisfy `import av` and
+    # the attribute lookups that happen at module-load time.
+    stub = types.ModuleType("av")
+    sys.modules["av"] = stub
+
+    # Now import faster_whisper (audio.py will find the stub)
+    try:
+        import faster_whisper.audio as _fwa
+    except Exception:
+        return  # still broken — give up
+
+    # Replace decode_audio with an ffmpeg-subprocess version
+    import subprocess
+    import numpy as np
+
+    def _decode_audio_ffmpeg(input_file, sampling_rate=16000, start_time=None, end_time=None):
+        cmd = [
+            "ffmpeg", "-y",
+            "-i", input_file,
+            "-f", "f32le", "-ac", "1", "-ar", str(sampling_rate),
+            "pipe:1",
+        ]
+        result = subprocess.run(cmd, capture_output=True)
+        if result.returncode != 0:
+            raise RuntimeError(f"ffmpeg failed: {result.stderr.decode()[:200]}")
+        return np.frombuffer(result.stdout, dtype=np.float32)
+
+    _fwa.decode_audio = _decode_audio_ffmpeg
+
+
 def _get_model():
     global _model
     if _model is None:
+        _patch_av_if_missing()
         from faster_whisper import WhisperModel
         _model = WhisperModel(WHISPER_MODEL_SIZE, device="cpu", compute_type="int8")
     return _model
@@ -20,9 +63,10 @@ def _get_model():
 
 def is_available() -> bool:
     try:
+        _patch_av_if_missing()
         import faster_whisper  # noqa: F401
         return True
-    except ImportError:
+    except Exception:
         return False
 
 
@@ -31,12 +75,10 @@ def analyze_call_audio(audio_url: str) -> dict:
     Download audio from URL, run Whisper transcription, extract quality metrics.
     Returns a dict with metrics or raises on error.
     """
-    # Download audio
     with httpx.Client(timeout=120, follow_redirects=True) as client:
         resp = client.get(audio_url)
         resp.raise_for_status()
 
-    # Detect extension
     clean_url = audio_url.split("?")[0]
     ext = ".mp3"
     if "." in clean_url.split("/")[-1]:
@@ -50,11 +92,7 @@ def analyze_call_audio(audio_url: str) -> dict:
 
     try:
         model = _get_model()
-        # vad_filter requires onnxruntime — disabled for compatibility
-        segments_gen, info = model.transcribe(
-            tmp_path,
-            word_timestamps=True,
-        )
+        segments_gen, info = model.transcribe(tmp_path, word_timestamps=True)
         segments = list(segments_gen)
 
         all_words = []
@@ -81,30 +119,24 @@ def analyze_call_audio(audio_url: str) -> dict:
 
         total_duration = round(info.duration, 1)
         speech_duration = sum(s["end"] - s["start"] for s in segment_list)
-
-        # Speech rate (words per minute)
         wpm = round(len(all_words) / (speech_duration / 60)) if speech_duration > 0 else 0
 
-        # Pauses between segments ≥ 2 seconds
         pauses = []
         for i in range(1, len(segment_list)):
             gap = segment_list[i]["start"] - segment_list[i - 1]["end"]
             if gap >= 2.0:
                 pauses.append(round(gap, 1))
 
-        # Diction score: mean word probability → scale 0-10
         word_probs = [w.probability for w in all_words]
         avg_prob = sum(word_probs) / len(word_probs) if word_probs else 0.0
         diction_score = round(avg_prob * 10, 1)
 
-        # Avg logprob across segments (clarity proxy; closer to 0 = clearer)
         avg_logprob = (
             round(sum(s["avg_logprob"] for s in segment_list) / len(segment_list), 3)
             if segment_list else -1.0
         )
 
-        # Filler words (Russian/Kazakh hesitation markers)
-        fillers = {"ну", "э", "эм", "мм", "вот", "значит", "ну вот", "как бы", "типа", "это"}
+        fillers = {"ну", "э", "эм", "мм", "вот", "значит", "как бы", "типа", "это"}
         filler_count = sum(
             1 for w in all_words
             if w.word.strip(" .,!?").lower() in fillers
